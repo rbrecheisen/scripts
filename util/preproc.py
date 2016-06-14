@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from sklearn.linear_model import LinearRegression
+
 
 __author__ = 'Ralph Brecheisen'
 
@@ -82,7 +84,41 @@ def remove_correlated_features(features, threshold=0.95, verbose=False):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+def match_ages_new(features, group1, group2, age_diff):
+    """
+    Match ages between subjects of the two groups.
+    :param features: Feature data
+    :param group1: Subject to be matched
+    :param group2: Subjects for looking up matches
+    :param age_diff: Max age difference
+    :return:
+    """
+    idx = []
+    for i in group1.index:
+        if i in idx:
+            continue
+        age1 = features.loc[i]['Age']
+        idx.append(i)
+        for j in group2.index:
+            if j in idx:
+                continue
+            age2 = features.loc[j]['Age']
+            if abs(age2 - age1) <= age_diff:
+                idx.append(j)
+    return features.loc[idx]
+
+
+# ----------------------------------------------------------------------------------------------------------------------
 def match_ages(features, label1, label2, age_diff, nr_labels=3):
+    """
+    Match ages between subjects of labels 1 and 2.
+    :param features:
+    :param label1:
+    :param label2:
+    :param age_diff:
+    :param nr_labels:
+    :return:
+    """
     diagnoses = ['HC', 'SZ', 'BD']
     diagnoses.remove(label1)
     diagnoses.remove(label2)
@@ -151,7 +187,7 @@ def match_ages(features, label1, label2, age_diff, nr_labels=3):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def residualize(features, confounds, target='diagnosis', verbose=False):
+def regress_out(features, confounds, target, verbose=False):
     # Get numeric features. This should exclude the target feature but we
     # will explicitly exclude it anyway.
     features_num = features.select_dtypes(include=[np.dtype(float), np.dtype(int)])
@@ -167,8 +203,9 @@ def residualize(features, confounds, target='diagnosis', verbose=False):
             confound_values = features[confound].copy(deep=True)
 
             # Check that we have binary labels
-            if confound_values.nunique() is not 2:
-                raise RuntimeError('Only binary labels supported')
+            x = confound_values.unique()
+            if len(x) is not 2:
+                raise RuntimeError('Only binary labels supported {}'.format(x))
 
             # Replace each label by its numerical equivalent. The first label
             # encountered will be set to zero (0), the second to one (1).
@@ -195,6 +232,22 @@ def residualize(features, confounds, target='diagnosis', verbose=False):
             features[column] = residuals
 
     return features
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def select_rows(features, column, values):
+    """
+    Selects rows in the feature data where 'column' equals one of the
+    values in 'values'.
+    :param features:
+    :param column:
+    :param values:
+    :return:
+    """
+    tmp = []
+    for value in values:
+        tmp.append(features[features[column] == value])
+    return pd.concat(tmp)
 
 
 # ----------------------------------------------------------------------------------------------------------------------

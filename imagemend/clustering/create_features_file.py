@@ -1,7 +1,8 @@
 import pandas as pd
+import util
 
 
-config = {
+CONFIG = {
     'CIMH': {
         'meta': '/Users/Ralph/data/imagemend/NEW_15042014_CIMH_ModifiedMetaData_15042014.xlsx',
         'features': '/Users/Ralph/data/imagemend/CIMH_allROIFeatures_N67.csv',
@@ -23,6 +24,8 @@ config = {
         'features_ext': None,
     },
 }
+
+OUTPUT_FILE = '/Users/Ralph/data/imagemend/features_ext_multi_center.csv'
 
 
 def to_gender(gender):
@@ -47,51 +50,58 @@ def index_of(column, columns):
 
 
 def run():
-    # For each center,
-    # - Load CSV file
-    # - Add some columns for age, gender, center and diagnosis
-    # - Save updated CSV file
-    for center in config.keys():
+
+    for center in CONFIG.keys():
 
         # Load meta data and give it a new index based on measurement and subject ID
-        meta_data_file_path = config[center]['meta']
+        meta_data_file_path = CONFIG[center]['meta']
         meta_data = pd.read_excel(meta_data_file_path, header=3)
         index = []
         for i in range(len(meta_data.index)):
             mid = meta_data.iloc[i][meta_data.columns[0]]
             sid = meta_data.iloc[i][meta_data.columns[1]]
             index.append('{}_{}_sMRI'.format(sid, mid))
-        meta_data.set_index(pd.Series(index))
+        meta_data['id'] = pd.Series(index)
+        meta_data.set_index('id', drop=True, inplace=True)
 
         # Load feature data
-        features_file_path = config[center]['features']
-        features = pd.read_csv(features_file_path)
+        features_file_path = CONFIG[center]['features']
+        features = util.load_features(features_file_path, index_col='MRid')
 
-        # Select rows in meta data corresponding to subject IDs in feature data
-        meta_data = meta_data.loc[features.index]
+        try:
+            # Select rows in meta data corresponding to subject IDs in feature data.
+            # Currently, there seems to be something wrong with the CIMH data, that
+            # is, there's no overlap in subject IDs at all...
+            # TODO: Wait for Emanuel to explain
+            meta_data = meta_data.loc[features.index]
+        except KeyError as e:
+            print('Subject IDs feature data do not match meta data {}'.format(e))
+            continue
+
+        meta_data = meta_data[meta_data['Gender [m/f]'].notnull()]
 
         # Convert gender values to standardized format
-        for i in range(len(meta_data.index)):
-            gender = meta_data.iloc[i]['Gender [m/f]']
-            meta_data.set_value(i, 'Gender [m/f]', to_gender(gender))
+        for idx in meta_data.index:
+            gender = meta_data.loc[idx]['Gender [m/f]']
+            meta_data.set_value(idx, 'Gender [m/f]', to_gender(gender))
 
         # Add columns to original feature data
         features['Center'] = center
         features['Age'] = meta_data['Age [years]']
         features['Gender'] = meta_data['Gender [m/f]']
         features['Diagnosis'] = meta_data['Diagnosis']
-        config[center]['features_ext'] = features
+        CONFIG[center]['features_ext'] = features
 
     # Concatenate feature data sets
     features = pd.concat([
-        config['CIMH']['features_ext'],
-        config['UIO']['features_ext'],
-        config['UNIBA']['features_ext'],
-        config['UNICH']['features_ext'],
+        CONFIG['CIMH']['features_ext'],
+        CONFIG['UIO']['features_ext'],
+        CONFIG['UNIBA']['features_ext'],
+        CONFIG['UNICH']['features_ext'],
     ])
 
     # Save concatenated feature data back to CSV file
-    features.to_csv('features.txt')
+    util.save_features(OUTPUT_FILE, features, index_label='MRid')
 
 
 if __name__ == '__main__':

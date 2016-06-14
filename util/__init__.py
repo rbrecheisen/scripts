@@ -8,23 +8,14 @@ import glob
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def load_features(file_name):
-    features = pd.read_csv(file_name, index_col='id')
+def load_features(file_name, index_col='id'):
+    features = pd.read_csv(file_name, index_col=index_col)
     return features
 
 
 # ----------------------------------------------------------------------------------------------------------------------
-def load_features_for(file_name, labels):
-    features = load_features(file_name)
-    tmp = []
-    for label in labels:
-        tmp.append(features[features[const.TARGET] == label])
-    return pd.concat(tmp)
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-def save_features(file_name, features):
-    features.to_csv(file_name, index=True, index_label='id')
+def save_features(file_name, features, index_label='id'):
+    features.to_csv(file_name, index=True, index_label=index_label)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
