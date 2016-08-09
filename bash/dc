@@ -47,6 +47,7 @@ elif [ "${1}" == "help" ]; then
 	echo "  up        Starts all containers in docker-compose.yml"
 	echo "  down      Shuts down all containers in docker-compose.yml"
 	echo "  bash      Enters running container and starts bash shell"
+	echo "            Parameters: <container name>"
 	exit 0
 else
 
