@@ -1,25 +1,55 @@
 if [ "${1}" == "clean" ]; then
+
 	docker stop $(docker ps -q)
 	docker rm -f $(docker ps -aq)
 	docker rmi -f $(docker images -q)
 	docker ps -a
 	docker images
+
 elif [ "${1}" == "cleanvols" ]; then
+
     docker volume rm $(docker volume ls -qf dangling=true)
+
 elif [ "${1}" == "stop" ]; then
+
 	docker stop $(docker ps -q)
 	docker rm -f $(docker ps -aq)
 	docker ps
+
 elif [ "${1}" == "shell" ]; then
+
     "/Applications/Docker/Docker Quickstart Terminal.app/Contents/Resources/Scripts/start.sh"
+
 elif [ "${1}" == "images" ]; then
+
     docker images
+
 elif [ "${1}" == "up" ]; then
+
     docker-compose down
     docker-compose up -d
     docker-compose ps
+
 elif [ "${1}" == "bash" ]; then
+
     docker exec -it ${2} bash
+
+elif [ "${1}" == "help" ]; then
+
+	echo "usage: dc <option> <params>"
+	echo "options:"
+	echo "  help      Print this help"
+	echo "  clean     Removes all containers and images"
+	echo "  cleanvols Removes all (dangling) volumes"
+	echo "  stop      Stops and removes all containers (if not using compose)"
+	echo "  shell     Starts Docker Machine terminal shell"
+	echo "  images    Lists available Docker images"
+	echo "  up        Starts all containers in docker-compose.yml"
+	echo "  down      Shuts down all containers in docker-compose.yml"
+	echo "  bash      Enters running container and starts bash shell"
+	exit 0
 else
+
     docker-compose ${@}
+
 fi
