@@ -25,11 +25,10 @@ def get_container_ids(flag='-q'):
     ids = []
     for id in result:
         if id != '':
-            # name = subprocess.check_output(['docker', 'inspect', '-f', '"{{.Config.Image}}"', '{}'.format(id)])
-            # name = name.strip()[2:-2]
-            # if not name.startswith('gcr.io'):
-            #     ids.append(id)
-            ids.append(id)
+            name = subprocess.check_output(['docker', 'inspect', '-f', '"{{.Name}}"', '{}'.format(id)])
+            name = name.strip()[2:-2]
+            if not name.startswith('k8s'):
+                ids.append(id)
     return ids
 
 
