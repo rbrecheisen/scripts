@@ -1,0 +1,20 @@
+#!/usr/bin/env python
+
+import os
+import subprocess
+
+def run():
+    base = '/Users/Ralph/development'
+    dirs = os.listdir(base)
+    for d in dirs:
+        d = os.path.join(base, d)
+        if not os.path.isdir(d):
+            continue
+        if not os.path.isdir(os.path.join(d, '.git')):
+            continue
+        print('pushing directory {}'.format(d))
+        # Add git commands here
+
+if __name__ == '__main__':
+    run()
+
