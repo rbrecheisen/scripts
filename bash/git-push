@@ -11,7 +11,7 @@ def run():
             continue
         if not os.path.isdir(os.path.join(d, '.git')):
             continue
-        os.system('cd {}; git add -A; git commit -m "Saving work"; git push'.format(d))
+        os.system('cd {}; git add -A; git commit -m "Saving work"; git pull'.format(d))
 
 if __name__ == '__main__':
     run()
