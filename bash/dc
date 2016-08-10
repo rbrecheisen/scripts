@@ -1,65 +1,165 @@
-if [ "${1}" == "clean" ]; then
+#!/usr/bin/env python
 
-	for name in yoda webserver files postgres data; do
-		container_id=$(docker inspect --format="{{.Id}}" ${name})
-		docker stop ${container_id}
-		docker rm -f ${container_id}
-	done
+import sys
+import subprocess
 
-	for name in yoda webserver files; do
-		image_id=$(docker inspect --format="{{.Id}}" yoda/${name})
-		docker rmi -f ${image_id}
-	done 
 
-	docker rmi -f $(docker images -qf dangling=true)
+# --------------------------------------------------------------------------------------------------------------------
+def get_image_ids():
+    result = subprocess.check_output(['docker', 'images', '-q'])
+    result = result.split('\n')
+    ids = []
+    for id in result:
+        if id != '':
+            tag = subprocess.check_output(['docker', 'inspect', '-f', '"{{.RepoTags}}"', '{}'.format(id)])
+            tag = tag.strip()[2:-2]
+            if not tag.startswith('gcr.io') and not tag.startswith('redis'):
+                ids.append(id)
+    return ids
 
-	dc cleanvols
 
-elif [ "${1}" == "cleanvols" ]; then
+# --------------------------------------------------------------------------------------------------------------------
+def get_container_ids(flag='-q'):
+    result = subprocess.check_output(['docker', 'ps', flag])
+    result = result.split('\n')
+    ids = []
+    for id in result:
+        if id != '':
+            name = subprocess.check_output(['docker', 'inspect', '-f', '"{{.Name}}"', '{}'.format(id)])
+            name = name.strip()[2:-2]
+            if not name.startswith('k8s'):
+                ids.append(id)
+    return ids
 
-    docker volume rm $(docker volume ls -qf dangling=true)
 
-elif [ "${1}" == "stop" ]; then
+# --------------------------------------------------------------------------------------------------------------------
+def get_container_names():
+    container_ids = get_running_container_ids()
+    names = []
+    for id in container_ids:
+        name = subprocess.check_output(['docker', 'inspect', '-f', '"{{.Name}}"', '{}'.format(id)])
+        name = name.strip()[2:-2]
+        names.append(name)
+    return names
 
-	docker stop $(docker ps -q)
-	docker rm -f $(docker ps -aq)
-	docker ps
 
-elif [ "${1}" == "shell" ]; then
+# --------------------------------------------------------------------------------------------------------------------
+def get_running_container_ids():
+    return get_container_ids()
 
-    "/Applications/Docker/Docker Quickstart Terminal.app/Contents/Resources/Scripts/start.sh"
 
-elif [ "${1}" == "images" ]; then
+# --------------------------------------------------------------------------------------------------------------------
+def get_all_container_ids():
+    return get_container_ids(flag='-aq')
 
-    docker images
 
-elif [ "${1}" == "up" ]; then
+# --------------------------------------------------------------------------------------------------------------------
+def get_stopped_container_ids():
+    ids_running = get_running_container_ids()
+    ids_all = get_all_container_ids()
+    ids = []
+    for id in ids_all:
+        if id not in ids_running:
+            ids.append(id)
+    return ids
 
-    docker-compose down
-    docker-compose up -d
-    docker-compose ps
 
-elif [ "${1}" == "bash" ]; then
+# --------------------------------------------------------------------------------------------------------------------
+def get_dangling_volume_ids():
+    result = subprocess.check_output(['docker', 'volume', 'ls', '-qf', 'dangling=true'])
+    result = result.split('\n')
+    ids = []
+    for id in result:
+        if id != '':
+            ids.append(id)
+    return ids
 
-    docker exec -it ${2} bash
 
-elif [ "${1}" == "help" ]; then
+# --------------------------------------------------------------------------------------------------------------------
+def clean():
+    container_ids = get_running_container_ids()
+    for id in container_ids:
+        subprocess.call(['docker', 'stop', '{}'.format(id)])
+    container_ids = get_stopped_container_ids()
+    for id in container_ids:
+        subprocess.call(['docker', 'rm', '-f', '{}'.format(id)])
+    image_ids = get_image_ids()
+    for id in image_ids:
+        subprocess.call(['docker', 'rmi', '-f', '{}'.format(id)])
+    clean_volumes()
 
-	echo "usage: dc <option> <params>"
-	echo "options:"
-	echo "  help      Print this help"
-	echo "  clean     Removes all containers and images"
-	echo "  cleanvols Removes all (dangling) volumes"
-	echo "  stop      Stops and removes all containers (if not using compose)"
-	echo "  shell     Starts Docker Machine terminal shell"
-	echo "  images    Lists available Docker images"
-	echo "  up        Starts all containers in docker-compose.yml"
-	echo "  down      Shuts down all containers in docker-compose.yml"
-	echo "  bash      Enters running container and starts bash shell"
-	echo "            Parameters: <container name>"
-	exit 0
-else
 
-    docker-compose ${@}
+# --------------------------------------------------------------------------------------------------------------------
+def clean_volumes():
+    # docker volume rm $(docker volume ls -qf dangling=true)
+    volume_ids = get_dangling_volume_ids()
+    for id in volume_ids:
+        subprocess.call(['docker', 'volume', 'rm', '{}'.format(id)])
 
-fi
+
+# --------------------------------------------------------------------------------------------------------------------
+def images():
+    print(subprocess.check_output(['docker', 'images']))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+def up():
+    subprocess.call(['docker-compose', 'down'])
+    subprocess.call(['docker-compose', 'up', '-d'])
+    print(subprocess.check_output(['docker-compose', 'ps']))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+def down():
+    subprocess.call(['docker-compose', 'down'])
+    print(subprocess.check_output(['docker-compose', 'ps']))
+
+
+# --------------------------------------------------------------------------------------------------------------------
+def bash(name):
+    container_name = ''
+    for n in get_container_names():
+        if name == n or name in n:
+            container_name = n
+    subprocess.call(['docker', 'exec', '-it', '{}'.format(container_name), 'bash'])
+
+
+# --------------------------------------------------------------------------------------------------------------------
+def show_help():
+    print('Usage: dc <option> [<params>]')
+    print('')
+    print('Options:')
+    print('')
+    print('clean         Removes all images and containers (except Kubernetes related)')
+    print('clean-volumes Removes all data volumes (including dangling)')
+    print('images        Lists all Docker images on local system')
+    print('up            Starts containers for docker-compose.yml in current directory')
+    print('down          Shuts down and removes containers')
+    print('bash <name>   Enters container <name> and opens bash shell (if available)')
+    print('ps            Lists containers in docker-compose.yml')
+    print('build         Builds all images for docker-compose.yml in current directory')
+    print('help          Shows this help')
+
+
+# --------------------------------------------------------------------------------------------------------------------
+def run(args):
+    if len(args) == 1:
+        show_help()
+    elif args[1] == 'clean':
+        clean()
+    elif args[1] == 'clean-volumes':
+        clean_volumes()
+    elif args[1] == 'images':
+        images()
+    elif args[1] == 'up':
+        up()
+    elif args[1] == 'down':
+        down()
+    elif args[1] == 'bash':
+        if len(args) == 3:
+            bash(args[2])
+    else:
+        subprocess.call(['docker-compose', args[1]])
+
+if __name__ == '__main__':
+    run(sys.argv)
