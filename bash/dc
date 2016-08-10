@@ -1,10 +1,19 @@
 if [ "${1}" == "clean" ]; then
 
-	docker stop $(docker ps -q)
-	docker rm -f $(docker ps -aq)
-	docker rmi -f $(docker images -q)
-	docker ps -a
-	docker images
+	for name in yoda webserver files postgres data; do
+		container_id=$(docker inspect --format="{{.Id}}" ${name})
+		docker stop ${container_id}
+		docker rm -f ${container_id}
+	done
+
+	for name in yoda webserver files; do
+		image_id=$(docker inspect --format="{{.Id}}" yoda/${name})
+		docker rmi -f ${image_id}
+	done 
+
+	docker rmi -f $(docker images -qf dangling=true)
+
+	dc cleanvols
 
 elif [ "${1}" == "cleanvols" ]; then
 
