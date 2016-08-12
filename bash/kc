@@ -8,7 +8,11 @@ elif [ "${1}" == "list" ]; then
         echo "--------------------------------------------------------"
         echo " PODS"
         echo "--------------------------------------------------------"
-        kubectl get pods -a
+        if [ "${3}" == "-a" ]; then
+            kubectl get pods -a
+        else
+            kubectl get pods
+        fi
         echo ""
     fi
 
