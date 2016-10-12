@@ -1,0 +1,185 @@
+20150828_161311 [INFO] 
+20150828_161311 [INFO] Accuracies:
+20150828_161311 [INFO] random-forest: 0.705091911765 +/- 0.0879077310583
+20150828_161311 [INFO] svm-sigmoid: 0.714613970588 +/- 0.0851737451672
+20150828_161311 [INFO] svm-rbf: 0.713051470588 +/- 0.078699445175
+20150828_161311 [INFO] svm-poly: 0.7184375 +/- 0.0804937418148
+20150828_161311 [INFO] 
+20150828_161311 [INFO] Pairwise t-test:
+20150828_161311 [INFO] random-forest <-> random-forest: 1.0
+20150828_161311 [INFO] random-forest <-> svm-sigmoid: 0.439835329306
+20150828_161311 [INFO] random-forest <-> svm-rbf: 0.502862009258
+20150828_161311 [INFO] random-forest <-> svm-poly: 0.266609050003
+20150828_161311 [INFO] svm-sigmoid <-> random-forest: 0.439835329306
+20150828_161311 [INFO] svm-sigmoid <-> svm-sigmoid: 1.0
+20150828_161311 [INFO] svm-sigmoid <-> svm-rbf: 0.893489632545
+20150828_161311 [INFO] svm-sigmoid <-> svm-poly: 0.745805035682
+20150828_161311 [INFO] svm-rbf <-> random-forest: 0.502862009258
+20150828_161311 [INFO] svm-rbf <-> svm-sigmoid: 0.893489632545
+20150828_161311 [INFO] svm-rbf <-> svm-rbf: 1.0
+20150828_161311 [INFO] svm-rbf <-> svm-poly: 0.634566190567
+20150828_161311 [INFO] svm-poly <-> random-forest: 0.266609050003
+20150828_161311 [INFO] svm-poly <-> svm-sigmoid: 0.745805035682
+20150828_161311 [INFO] svm-poly <-> svm-rbf: 0.634566190567
+20150828_161311 [INFO] svm-poly <-> svm-poly: 1.0
+20150828_161311 [INFO] 
+20150828_161311 [INFO] Pairwise Wilcoxon ranked-sign test:
+20150828_161311 [INFO] random-forest <-> svm-sigmoid: wilcoxon: 0.155881327309
+20150828_161311 [INFO] random-forest <-> svm-rbf: wilcoxon: 0.118117604907
+20150828_161311 [INFO] random-forest <-> svm-poly: wilcoxon: 0.0482838757009
+20150828_161311 [INFO] 
+20150828_161311 [INFO] svm-sigmoid <-> random-forest: wilcoxon: 0.155881327309
+20150828_161311 [INFO] svm-sigmoid <-> svm-rbf: wilcoxon: 0.592547046138
+20150828_161311 [INFO] svm-sigmoid <-> svm-poly: wilcoxon: 0.280890631692
+20150828_161311 [INFO] 
+20150828_161311 [INFO] svm-rbf <-> random-forest: wilcoxon: 0.118117604907
+20150828_161311 [INFO] svm-rbf <-> svm-sigmoid: wilcoxon: 0.592547046138
+20150828_161311 [INFO] svm-rbf <-> svm-poly: wilcoxon: 0.146233414179
+20150828_161311 [INFO] 
+20150828_161311 [INFO] svm-poly <-> random-forest: wilcoxon: 0.0482838757009
+20150828_161311 [INFO] svm-poly <-> svm-sigmoid: wilcoxon: 0.280890631692
+20150828_161311 [INFO] svm-poly <-> svm-rbf: wilcoxon: 0.146233414179
+20150828_161311 [INFO] 
+20150828_161311 [INFO] Friedman's test:
+20150828_161311 [INFO] 
+20150828_161311 [INFO] p_value: 0.0384293188579
+20150828_161311 [INFO] 
+20150828_161311 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script generates a statistical report from the output.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import evaluate
+
+import numpy as np
+import pandas as pd
+
+from scipy.stats import ttest_ind
+from scipy.stats import friedmanchisquare
+from scipy.stats import wilcoxon
+
+RESULTS_FILE = '/Users/Ralph/experiments/oslo/experiments/20150818_perf_eval/results/20150826_170051_perf_info.json'
+
+REPORT = logging.Logger(log_dir=const.REPORTS_DIR)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def chunk(l, n):
+
+    return [l[i:i+n] for i in range(0, len(l), n)]
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run(file_name):
+
+    results = util.from_file(file_name)
+
+    # Calculate accuracies for each classifier based on the true and
+    # predicted labels
+    accuracies = {}
+    for classifier in results.keys():
+        accuracies[classifier] = []
+        for info in results[classifier]:
+            y_true = info['true']
+            y_pred = info['pred']
+            accuracies[classifier].append(evaluate.get_accuracy_score(y_true, y_pred))
+
+    # Print mean accuracies and standard deviations
+    REPORT.info()
+    REPORT.info('Accuracies:')
+    for classifier in accuracies.keys():
+        REPORT.info('{}: {} +/- {}'.format(classifier, np.mean(accuracies[classifier]), np.std(accuracies[classifier])))
+    REPORT.info()
+
+    # Run matched-samples, equal-variance t-test
+    REPORT.info('Pairwise t-test:')
+    for classifier1 in accuracies.keys():
+        for classifier2 in accuracies.keys():
+            scores1 = accuracies[classifier1]
+            scores2 = accuracies[classifier2]
+            p_value = ttest_ind(scores1, scores2, equal_var=True)[1]
+            REPORT.info('{} <-> {}: {}'.format(classifier1, classifier2, p_value))
+    REPORT.info()
+
+    # # Run McNemar's test
+    # REPORT.info('Pairwise McNemar\'s test:')
+    # for classifier1 in results.keys():
+    #     for classifier2 in results.keys():
+    #         if classifier1 == classifier2:
+    #             continue
+    #         for i in range(len(results[classifier1])):
+    #             y_true  = results[classifier1][i]['true']
+    #             y_pred1 = results[classifier1][i]['pred']
+    #             y_pred2 = results[classifier2][i]['pred']
+    #             c00 = 0
+    #             c01 = 0
+    #             c10 = 0
+    #             c11 = 0
+    #             for j in range(len(y_true)):
+    #                 if not y_true[j] == y_pred1[j] and not y_true[j] == y_pred2[j]:
+    #                     c00 += 1
+    #                 if not y_true[j] == y_pred1[j] and y_true[j] == y_pred2[j]:
+    #                     c01 += 1
+    #                 if y_true[j] == y_pred1[j] and not y_true[j] == y_pred2[j]:
+    #                     c10 += 1
+    #                 if y_true[j] == y_pred1[j] and y_true[j] == y_pred2[j]:
+    #                     c11 += 1
+    #             p_value = chisquare([c01, c10])[1]
+    #             REPORT.info('{} <-> {}: chi-square: {}'.format(classifier1, classifier2, p_value))
+    #         REPORT.info()
+
+    # Run pairwise Wilcoxon ranked-sign test
+    REPORT.info('Pairwise Wilcoxon ranked-sign test:')
+    for classifier1 in accuracies.keys():
+        for classifier2 in accuracies.keys():
+            if classifier1 == classifier2:
+                continue
+            scores1 = accuracies[classifier1]
+            scores2 = accuracies[classifier2]
+            p_value = wilcoxon(scores1, scores2, zero_method='wilcox')[1]
+            REPORT.info('{} <-> {}: wilcoxon: {}'.format(classifier1, classifier2, p_value))
+        REPORT.info()
+
+    # Run Friedman test
+    REPORT.info('Friedman\'s test:')
+    data = []
+    for classifier in accuracies.keys():
+        row = []
+        for item in chunk(accuracies[classifier], 10):
+            row.append(np.mean(item))
+        data.append(row)
+    data = pd.DataFrame(
+        np.array(data).T,
+        columns=accuracies.keys(),
+        index=['D' + str(i) for i in range(10)])
+
+    p_value = friedmanchisquare(
+        data['svm-rbf'],
+        data['svm-poly'],
+        data['svm-sigmoid'],
+        data['random-forest'])[1]
+    REPORT.info()
+    REPORT.info('p_value: {}'.format(p_value))
+
+    ranks = []
+    for row in data.index:
+        print(data.loc[row])
+
+    # Close the report file
+    REPORT.append_file(__file__)
+    REPORT.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+    run(RESULTS_FILE)

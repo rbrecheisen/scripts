@@ -1,0 +1,475 @@
+20150922_154701 [INFO] HC - SZ
+20150922_154701 [INFO] Running kernel rbf
+20150922_154703 [INFO]   score (rbf): 0.794117647059
+20150922_154705 [INFO]   score (rbf): 0.764705882353
+20150922_154707 [INFO]   score (rbf): 0.529411764706
+20150922_154709 [INFO]   score (rbf): 0.764705882353
+20150922_154712 [INFO]   score (rbf): 0.764705882353
+20150922_154714 [INFO]   score (rbf): 0.735294117647
+20150922_154716 [INFO]   score (rbf): 0.71875
+20150922_154718 [INFO]   score (rbf): 0.78125
+20150922_154720 [INFO]   score (rbf): 0.625
+20150922_154722 [INFO]   score (rbf): 0.75
+20150922_154724 [INFO]   score (rbf): 0.794117647059
+20150922_154726 [INFO]   score (rbf): 0.764705882353
+20150922_154729 [INFO]   score (rbf): 0.529411764706
+20150922_154731 [INFO]   score (rbf): 0.764705882353
+20150922_154733 [INFO]   score (rbf): 0.764705882353
+20150922_154735 [INFO]   score (rbf): 0.735294117647
+20150922_154737 [INFO]   score (rbf): 0.71875
+20150922_154739 [INFO]   score (rbf): 0.78125
+20150922_154741 [INFO]   score (rbf): 0.625
+20150922_154743 [INFO]   score (rbf): 0.75
+20150922_154745 [INFO]   score (rbf): 0.794117647059
+20150922_154748 [INFO]   score (rbf): 0.764705882353
+20150922_154750 [INFO]   score (rbf): 0.529411764706
+20150922_154752 [INFO]   score (rbf): 0.764705882353
+20150922_154754 [INFO]   score (rbf): 0.764705882353
+20150922_154756 [INFO]   score (rbf): 0.735294117647
+20150922_154758 [INFO]   score (rbf): 0.71875
+20150922_154800 [INFO]   score (rbf): 0.78125
+20150922_154802 [INFO]   score (rbf): 0.625
+20150922_154805 [INFO]   score (rbf): 0.75
+20150922_154807 [INFO]   score (rbf): 0.794117647059
+20150922_154809 [INFO]   score (rbf): 0.764705882353
+20150922_154811 [INFO]   score (rbf): 0.529411764706
+20150922_154813 [INFO]   score (rbf): 0.764705882353
+20150922_154815 [INFO]   score (rbf): 0.764705882353
+20150922_154817 [INFO]   score (rbf): 0.735294117647
+20150922_154819 [INFO]   score (rbf): 0.71875
+20150922_154821 [INFO]   score (rbf): 0.78125
+20150922_154824 [INFO]   score (rbf): 0.625
+20150922_154826 [INFO]   score (rbf): 0.75
+20150922_154828 [INFO]   score (rbf): 0.794117647059
+20150922_154830 [INFO]   score (rbf): 0.764705882353
+20150922_154832 [INFO]   score (rbf): 0.529411764706
+20150922_154834 [INFO]   score (rbf): 0.764705882353
+20150922_154836 [INFO]   score (rbf): 0.764705882353
+20150922_154838 [INFO]   score (rbf): 0.735294117647
+20150922_154840 [INFO]   score (rbf): 0.71875
+20150922_154843 [INFO]   score (rbf): 0.78125
+20150922_154845 [INFO]   score (rbf): 0.625
+20150922_154847 [INFO]   score (rbf): 0.75
+20150922_154849 [INFO]   score (rbf): 0.794117647059
+20150922_154851 [INFO]   score (rbf): 0.764705882353
+20150922_154853 [INFO]   score (rbf): 0.529411764706
+20150922_154855 [INFO]   score (rbf): 0.764705882353
+20150922_154857 [INFO]   score (rbf): 0.764705882353
+20150922_154900 [INFO]   score (rbf): 0.735294117647
+20150922_154902 [INFO]   score (rbf): 0.71875
+20150922_154904 [INFO]   score (rbf): 0.78125
+20150922_154906 [INFO]   score (rbf): 0.625
+20150922_154908 [INFO]   score (rbf): 0.75
+20150922_154910 [INFO]   score (rbf): 0.794117647059
+20150922_154912 [INFO]   score (rbf): 0.764705882353
+20150922_154914 [INFO]   score (rbf): 0.529411764706
+20150922_154916 [INFO]   score (rbf): 0.764705882353
+20150922_154919 [INFO]   score (rbf): 0.764705882353
+20150922_154921 [INFO]   score (rbf): 0.735294117647
+20150922_154923 [INFO]   score (rbf): 0.71875
+20150922_154925 [INFO]   score (rbf): 0.78125
+20150922_154927 [INFO]   score (rbf): 0.625
+20150922_154929 [INFO]   score (rbf): 0.75
+20150922_154931 [INFO]   score (rbf): 0.794117647059
+20150922_154933 [INFO]   score (rbf): 0.764705882353
+20150922_154936 [INFO]   score (rbf): 0.529411764706
+20150922_154938 [INFO]   score (rbf): 0.764705882353
+20150922_154940 [INFO]   score (rbf): 0.764705882353
+20150922_154942 [INFO]   score (rbf): 0.735294117647
+20150922_154944 [INFO]   score (rbf): 0.71875
+20150922_154946 [INFO]   score (rbf): 0.78125
+20150922_154948 [INFO]   score (rbf): 0.625
+20150922_154950 [INFO]   score (rbf): 0.75
+20150922_154952 [INFO]   score (rbf): 0.794117647059
+20150922_154955 [INFO]   score (rbf): 0.764705882353
+20150922_154957 [INFO]   score (rbf): 0.529411764706
+20150922_154959 [INFO]   score (rbf): 0.764705882353
+20150922_155001 [INFO]   score (rbf): 0.764705882353
+20150922_155003 [INFO]   score (rbf): 0.735294117647
+20150922_155005 [INFO]   score (rbf): 0.71875
+20150922_155007 [INFO]   score (rbf): 0.78125
+20150922_155009 [INFO]   score (rbf): 0.625
+20150922_155011 [INFO]   score (rbf): 0.75
+20150922_155013 [INFO]   score (rbf): 0.794117647059
+20150922_155016 [INFO]   score (rbf): 0.764705882353
+20150922_155018 [INFO]   score (rbf): 0.529411764706
+20150922_155020 [INFO]   score (rbf): 0.764705882353
+20150922_155022 [INFO]   score (rbf): 0.764705882353
+20150922_155024 [INFO]   score (rbf): 0.735294117647
+20150922_155026 [INFO]   score (rbf): 0.71875
+20150922_155028 [INFO]   score (rbf): 0.78125
+20150922_155030 [INFO]   score (rbf): 0.625
+20150922_155033 [INFO]   score (rbf): 0.75
+20150922_155033 [INFO] overall score (rbf): 0.722794117647
+20150922_155033 [INFO] HC - BD
+20150922_155033 [INFO] Running kernel rbf
+20150922_155035 [INFO]   score (rbf): 0.578947368421
+20150922_155038 [INFO]   score (rbf): 0.552631578947
+20150922_155040 [INFO]   score (rbf): 0.5
+20150922_155042 [INFO]   score (rbf): 0.666666666667
+20150922_155044 [INFO]   score (rbf): 0.611111111111
+20150922_155046 [INFO]   score (rbf): 0.722222222222
+20150922_155048 [INFO]   score (rbf): 0.638888888889
+20150922_155050 [INFO]   score (rbf): 0.527777777778
+20150922_155052 [INFO]   score (rbf): 0.611111111111
+20150922_155055 [INFO]   score (rbf): 0.472222222222
+20150922_155057 [INFO]   score (rbf): 0.578947368421
+20150922_155059 [INFO]   score (rbf): 0.552631578947
+20150922_155101 [INFO]   score (rbf): 0.5
+20150922_155103 [INFO]   score (rbf): 0.666666666667
+20150922_155105 [INFO]   score (rbf): 0.611111111111
+20150922_155107 [INFO]   score (rbf): 0.722222222222
+20150922_155109 [INFO]   score (rbf): 0.638888888889
+20150922_155112 [INFO]   score (rbf): 0.527777777778
+20150922_155114 [INFO]   score (rbf): 0.611111111111
+20150922_155116 [INFO]   score (rbf): 0.472222222222
+20150922_155118 [INFO]   score (rbf): 0.578947368421
+20150922_155120 [INFO]   score (rbf): 0.552631578947
+20150922_155122 [INFO]   score (rbf): 0.5
+20150922_155124 [INFO]   score (rbf): 0.666666666667
+20150922_155126 [INFO]   score (rbf): 0.611111111111
+20150922_155128 [INFO]   score (rbf): 0.722222222222
+20150922_155130 [INFO]   score (rbf): 0.638888888889
+20150922_155133 [INFO]   score (rbf): 0.527777777778
+20150922_155135 [INFO]   score (rbf): 0.611111111111
+20150922_155137 [INFO]   score (rbf): 0.472222222222
+20150922_155139 [INFO]   score (rbf): 0.578947368421
+20150922_155141 [INFO]   score (rbf): 0.552631578947
+20150922_155143 [INFO]   score (rbf): 0.5
+20150922_155145 [INFO]   score (rbf): 0.666666666667
+20150922_155147 [INFO]   score (rbf): 0.611111111111
+20150922_155149 [INFO]   score (rbf): 0.722222222222
+20150922_155151 [INFO]   score (rbf): 0.638888888889
+20150922_155154 [INFO]   score (rbf): 0.527777777778
+20150922_155156 [INFO]   score (rbf): 0.611111111111
+20150922_155158 [INFO]   score (rbf): 0.472222222222
+20150922_155200 [INFO]   score (rbf): 0.578947368421
+20150922_155202 [INFO]   score (rbf): 0.552631578947
+20150922_155204 [INFO]   score (rbf): 0.5
+20150922_155206 [INFO]   score (rbf): 0.666666666667
+20150922_155208 [INFO]   score (rbf): 0.611111111111
+20150922_155210 [INFO]   score (rbf): 0.722222222222
+20150922_155212 [INFO]   score (rbf): 0.638888888889
+20150922_155215 [INFO]   score (rbf): 0.527777777778
+20150922_155217 [INFO]   score (rbf): 0.611111111111
+20150922_155219 [INFO]   score (rbf): 0.472222222222
+20150922_155221 [INFO]   score (rbf): 0.578947368421
+20150922_155223 [INFO]   score (rbf): 0.552631578947
+20150922_155225 [INFO]   score (rbf): 0.5
+20150922_155227 [INFO]   score (rbf): 0.666666666667
+20150922_155229 [INFO]   score (rbf): 0.611111111111
+20150922_155231 [INFO]   score (rbf): 0.722222222222
+20150922_155234 [INFO]   score (rbf): 0.638888888889
+20150922_155236 [INFO]   score (rbf): 0.527777777778
+20150922_155238 [INFO]   score (rbf): 0.611111111111
+20150922_155240 [INFO]   score (rbf): 0.472222222222
+20150922_155242 [INFO]   score (rbf): 0.578947368421
+20150922_155244 [INFO]   score (rbf): 0.552631578947
+20150922_155247 [INFO]   score (rbf): 0.5
+20150922_155249 [INFO]   score (rbf): 0.666666666667
+20150922_155251 [INFO]   score (rbf): 0.611111111111
+20150922_155253 [INFO]   score (rbf): 0.722222222222
+20150922_155255 [INFO]   score (rbf): 0.638888888889
+20150922_155257 [INFO]   score (rbf): 0.527777777778
+20150922_155259 [INFO]   score (rbf): 0.611111111111
+20150922_155301 [INFO]   score (rbf): 0.472222222222
+20150922_155303 [INFO]   score (rbf): 0.578947368421
+20150922_155306 [INFO]   score (rbf): 0.552631578947
+20150922_155308 [INFO]   score (rbf): 0.5
+20150922_155310 [INFO]   score (rbf): 0.666666666667
+20150922_155312 [INFO]   score (rbf): 0.611111111111
+20150922_155314 [INFO]   score (rbf): 0.722222222222
+20150922_155316 [INFO]   score (rbf): 0.638888888889
+20150922_155318 [INFO]   score (rbf): 0.527777777778
+20150922_155320 [INFO]   score (rbf): 0.611111111111
+20150922_155323 [INFO]   score (rbf): 0.472222222222
+20150922_155325 [INFO]   score (rbf): 0.578947368421
+20150922_155327 [INFO]   score (rbf): 0.552631578947
+20150922_155329 [INFO]   score (rbf): 0.5
+20150922_155331 [INFO]   score (rbf): 0.666666666667
+20150922_155333 [INFO]   score (rbf): 0.611111111111
+20150922_155335 [INFO]   score (rbf): 0.722222222222
+20150922_155337 [INFO]   score (rbf): 0.638888888889
+20150922_155340 [INFO]   score (rbf): 0.527777777778
+20150922_155342 [INFO]   score (rbf): 0.611111111111
+20150922_155344 [INFO]   score (rbf): 0.472222222222
+20150922_155346 [INFO]   score (rbf): 0.578947368421
+20150922_155348 [INFO]   score (rbf): 0.552631578947
+20150922_155350 [INFO]   score (rbf): 0.5
+20150922_155352 [INFO]   score (rbf): 0.666666666667
+20150922_155354 [INFO]   score (rbf): 0.611111111111
+20150922_155356 [INFO]   score (rbf): 0.722222222222
+20150922_155358 [INFO]   score (rbf): 0.638888888889
+20150922_155401 [INFO]   score (rbf): 0.527777777778
+20150922_155403 [INFO]   score (rbf): 0.611111111111
+20150922_155405 [INFO]   score (rbf): 0.472222222222
+20150922_155405 [INFO] overall score (rbf): 0.588157894737
+20150922_155405 [INFO] SZ - BD
+20150922_155405 [INFO] Running kernel rbf
+20150922_155407 [INFO]   score (rbf): 0.647058823529
+20150922_155409 [INFO]   score (rbf): 0.764705882353
+20150922_155411 [INFO]   score (rbf): 0.588235294118
+20150922_155412 [INFO]   score (rbf): 0.647058823529
+20150922_155414 [INFO]   score (rbf): 0.625
+20150922_155415 [INFO]   score (rbf): 0.5625
+20150922_155417 [INFO]   score (rbf): 0.625
+20150922_155419 [INFO]   score (rbf): 0.625
+20150922_155420 [INFO]   score (rbf): 0.53125
+20150922_155422 [INFO]   score (rbf): 0.59375
+20150922_155424 [INFO]   score (rbf): 0.647058823529
+20150922_155425 [INFO]   score (rbf): 0.764705882353
+20150922_155427 [INFO]   score (rbf): 0.588235294118
+20150922_155429 [INFO]   score (rbf): 0.647058823529
+20150922_155431 [INFO]   score (rbf): 0.625
+20150922_155432 [INFO]   score (rbf): 0.5625
+20150922_155434 [INFO]   score (rbf): 0.625
+20150922_155435 [INFO]   score (rbf): 0.625
+20150922_155437 [INFO]   score (rbf): 0.53125
+20150922_155439 [INFO]   score (rbf): 0.59375
+20150922_155441 [INFO]   score (rbf): 0.647058823529
+20150922_155442 [INFO]   score (rbf): 0.764705882353
+20150922_155444 [INFO]   score (rbf): 0.588235294118
+20150922_155446 [INFO]   score (rbf): 0.647058823529
+20150922_155447 [INFO]   score (rbf): 0.625
+20150922_155449 [INFO]   score (rbf): 0.5625
+20150922_155451 [INFO]   score (rbf): 0.625
+20150922_155452 [INFO]   score (rbf): 0.625
+20150922_155454 [INFO]   score (rbf): 0.53125
+20150922_155456 [INFO]   score (rbf): 0.59375
+20150922_155457 [INFO]   score (rbf): 0.647058823529
+20150922_155459 [INFO]   score (rbf): 0.764705882353
+20150922_155501 [INFO]   score (rbf): 0.588235294118
+20150922_155502 [INFO]   score (rbf): 0.647058823529
+20150922_155504 [INFO]   score (rbf): 0.625
+20150922_155506 [INFO]   score (rbf): 0.5625
+20150922_155507 [INFO]   score (rbf): 0.625
+20150922_155509 [INFO]   score (rbf): 0.625
+20150922_155511 [INFO]   score (rbf): 0.53125
+20150922_155512 [INFO]   score (rbf): 0.59375
+20150922_155514 [INFO]   score (rbf): 0.647058823529
+20150922_155516 [INFO]   score (rbf): 0.764705882353
+20150922_155518 [INFO]   score (rbf): 0.588235294118
+20150922_155519 [INFO]   score (rbf): 0.647058823529
+20150922_155521 [INFO]   score (rbf): 0.625
+20150922_155522 [INFO]   score (rbf): 0.5625
+20150922_155524 [INFO]   score (rbf): 0.625
+20150922_155526 [INFO]   score (rbf): 0.625
+20150922_155527 [INFO]   score (rbf): 0.53125
+20150922_155529 [INFO]   score (rbf): 0.59375
+20150922_155531 [INFO]   score (rbf): 0.647058823529
+20150922_155532 [INFO]   score (rbf): 0.764705882353
+20150922_155534 [INFO]   score (rbf): 0.588235294118
+20150922_155536 [INFO]   score (rbf): 0.647058823529
+20150922_155537 [INFO]   score (rbf): 0.625
+20150922_155539 [INFO]   score (rbf): 0.5625
+20150922_155541 [INFO]   score (rbf): 0.625
+20150922_155542 [INFO]   score (rbf): 0.625
+20150922_155544 [INFO]   score (rbf): 0.53125
+20150922_155546 [INFO]   score (rbf): 0.59375
+20150922_155547 [INFO]   score (rbf): 0.647058823529
+20150922_155549 [INFO]   score (rbf): 0.764705882353
+20150922_155551 [INFO]   score (rbf): 0.588235294118
+20150922_155553 [INFO]   score (rbf): 0.647058823529
+20150922_155554 [INFO]   score (rbf): 0.625
+20150922_155556 [INFO]   score (rbf): 0.5625
+20150922_155558 [INFO]   score (rbf): 0.625
+20150922_155559 [INFO]   score (rbf): 0.625
+20150922_155601 [INFO]   score (rbf): 0.53125
+20150922_155602 [INFO]   score (rbf): 0.59375
+20150922_155604 [INFO]   score (rbf): 0.647058823529
+20150922_155606 [INFO]   score (rbf): 0.764705882353
+20150922_155608 [INFO]   score (rbf): 0.588235294118
+20150922_155609 [INFO]   score (rbf): 0.647058823529
+20150922_155611 [INFO]   score (rbf): 0.625
+20150922_155613 [INFO]   score (rbf): 0.5625
+20150922_155614 [INFO]   score (rbf): 0.625
+20150922_155616 [INFO]   score (rbf): 0.625
+20150922_155618 [INFO]   score (rbf): 0.53125
+20150922_155619 [INFO]   score (rbf): 0.59375
+20150922_155621 [INFO]   score (rbf): 0.647058823529
+20150922_155623 [INFO]   score (rbf): 0.764705882353
+20150922_155625 [INFO]   score (rbf): 0.588235294118
+20150922_155626 [INFO]   score (rbf): 0.647058823529
+20150922_155628 [INFO]   score (rbf): 0.625
+20150922_155630 [INFO]   score (rbf): 0.5625
+20150922_155631 [INFO]   score (rbf): 0.625
+20150922_155633 [INFO]   score (rbf): 0.625
+20150922_155634 [INFO]   score (rbf): 0.53125
+20150922_155636 [INFO]   score (rbf): 0.59375
+20150922_155638 [INFO]   score (rbf): 0.647058823529
+20150922_155640 [INFO]   score (rbf): 0.764705882353
+20150922_155641 [INFO]   score (rbf): 0.588235294118
+20150922_155643 [INFO]   score (rbf): 0.647058823529
+20150922_155645 [INFO]   score (rbf): 0.625
+20150922_155646 [INFO]   score (rbf): 0.5625
+20150922_155648 [INFO]   score (rbf): 0.625
+20150922_155649 [INFO]   score (rbf): 0.625
+20150922_155651 [INFO]   score (rbf): 0.53125
+20150922_155653 [INFO]   score (rbf): 0.59375
+20150922_155653 [INFO] overall score (rbf): 0.620955882353
+20150922_155653 [INFO] 
+20150922_155653 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script runs a Gaussian Process classifier on the FreeSurfer features.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import prepare
+
+import GPy
+import numpy as np
+
+from sklearn.cross_validation import StratifiedKFold
+
+from matplotlib import pyplot as plt
+
+LOG = logging.Logger()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def find_params(features):
+
+    X, y = util.get_xy(
+        features,
+        target_column='diagnosis',
+        exclude_columns=['age', 'gender', 'diagnosis'])
+    Y = np.array([y]).T
+    n = X.shape[1]
+
+    if not os.path.isdir('fig'):
+        os.mkdir('fig')
+
+    for k in kernels:
+        for length_scale in np.linspace(1.0, 10.0, num=10):
+            kernel = kernels[k]
+            kernel.lengthscale = length_scale
+            classifier = GPy.models.GPClassification(X, Y, kernel)
+            plt.matshow(classifier.kern.K(classifier.X))
+            plt.savefig('fig/fig_{}_{}.png'.format(k, str(length_scale)))
+            plt.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def build_kernel(name, input_dim):
+
+    if name == 'linear':
+        return GPy.kern.Linear(input_dim)
+    if name == 'rbf':
+        return GPy.kern.RBF(input_dim, lengthscale=5.)
+    if name == 'matern32':
+        return GPy.kern.Matern32(input_dim, lengthscale=4.)
+    if name == 'exponential':
+        return GPy.kern.Exponential(input_dim, lengthscale=2.)
+    return None
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run_gp(features, n_iters=10):
+
+    X, y = util.get_xy(
+        features,
+        target_column='diagnosis',
+        exclude_columns=['age', 'gender', 'diagnosis'])
+
+    kernels = ['rbf']
+    scores = {}
+
+    for k in kernels:
+
+        LOG.info('Running kernel {}'.format(k))
+        scores[k] = []
+
+        for i in range(n_iters):
+
+            for train, test in StratifiedKFold(y, n_folds=10):
+
+                X_train = X[train]
+                Y_train = np.array([y[train]]).T
+                kernel = build_kernel(k, X_train.shape[1])
+                classifier = GPy.models.GPClassification(X_train, Y_train, kernel)
+                for _ in range(5):
+                    classifier.optimize()
+
+                X_test = X[test]
+                Y_test = np.array([y[test]]).T
+                probs = classifier.predict(X_test)[0]
+                error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+                scores[k].append(1.0 - error_rate)
+                LOG.info('  score ({}): {}'.format(k, scores[k][-1]))
+
+    return scores
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run():
+
+    # Load FreeSurfer features
+    features = util.load_features(const.FREESURFER_FILE)
+    # Perform age-matching between healthy and schizophrenia patients
+    features = prepare.match_ages(features, 'HC', 'SZ', 2, nr_labels=2)
+    # Remove constant features
+    features = prepare.remove_constant_features(features)
+    # Normalize numerical features across subjects (excluding 'age')
+    features = prepare.normalize_across_subjects(features, exclude=['age'])
+    # Subtract age and gender confounds
+    features = prepare.residualize(features, ['age', 'gender', 'EstimatedTotalIntraCranialVol'])
+    # Replace HC and SZ labels with -1 and 1
+    features['diagnosis'].replace(['HC', 'SZ'], [1, 0], inplace=True)
+
+    LOG.info('HC - SZ')
+    scores = run_gp(features, 10)
+    for k in scores.keys():
+        LOG.info('overall score ({}): {}'.format(k, np.mean(scores[k])))
+
+    # Load FreeSurfer features
+    features = util.load_features(const.FREESURFER_FILE)
+    # Perform age-matching between healthy and schizophrenia patients
+    features = prepare.match_ages(features, 'HC', 'BD', 2, nr_labels=2)
+    # Remove constant features
+    features = prepare.remove_constant_features(features)
+    # Normalize numerical features across subjects (excluding 'age')
+    features = prepare.normalize_across_subjects(features, exclude=['age'])
+    # Subtract age and gender confounds
+    features = prepare.residualize(features, ['age', 'gender', 'EstimatedTotalIntraCranialVol'])
+    # Replace HC and SZ labels with -1 and 1
+    features['diagnosis'].replace(['HC', 'BD'], [1, 0], inplace=True)
+
+    LOG.info('HC - BD')
+    scores = run_gp(features, 10)
+    for k in scores.keys():
+        LOG.info('overall score ({}): {}'.format(k, np.mean(scores[k])))
+
+    # Load FreeSurfer features
+    features = util.load_features(const.FREESURFER_FILE)
+    # Perform age-matching between healthy and schizophrenia patients
+    features = prepare.match_ages(features, 'SZ', 'BD', 2, nr_labels=2)
+    # Remove constant features
+    features = prepare.remove_constant_features(features)
+    # Normalize numerical features across subjects (excluding 'age')
+    features = prepare.normalize_across_subjects(features, exclude=['age'])
+    # Subtract age and gender confounds
+    features = prepare.residualize(features, ['age', 'gender', 'EstimatedTotalIntraCranialVol'])
+    # Replace HC and SZ labels with -1 and 1
+    features['diagnosis'].replace(['SZ', 'BD'], [1, 0], inplace=True)
+
+    LOG.info('SZ - BD')
+    scores = run_gp(features, 10)
+    for k in scores.keys():
+        LOG.info('overall score ({}): {}'.format(k, np.mean(scores[k])))
+
+    # Close log
+    LOG.append_file(__file__)
+    LOG.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+    run()

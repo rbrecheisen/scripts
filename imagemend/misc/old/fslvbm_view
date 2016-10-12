@@ -1,0 +1,49 @@
+#!/bin/bash
+
+Usage() {
+    echo ""
+    echo "usage: fslvbm_view <smoothing> [voxel|tfce] <contrast> [alpha]"
+    echo ""
+    echo "       <smoothing>  : smoothing kernel in mm's"
+    echo "       [voxel|tfce] : type of statistic:"
+    echo "                      voxel : family-wise error corrected voxel-level statistic"
+    echo "                      tfce  : family-wise error corrected threshold-free cluster enhancement"
+    echo "       <contrast>   : contrast index in design.con"
+    echo "       [alpha]      : alpha threshold value (default 0.949)"
+    echo ""
+    exit 1
+}
+
+[ "$1" == "" ] && Usage
+[ "$2" == "" ] && Usage
+[ "$3" == "" ] && Usage
+
+smoothing=${1}
+statistic=${2}
+contrast=${3}
+
+alpha="0.949"
+if [ "${4}" != "" ] ; then
+	alpha=${4}
+fi
+
+if [ ! -f template_GM.nii.gz ] ; then
+	echo "error: template_GM does not exist"
+	exit 0
+fi
+
+filename=""
+if [ "${statistic}" == "voxel" ] ; then
+	filename="GM_merg_mod_s${smoothing}_vox_corrp_tstat${contrast}"
+elif [ "${statistic}" == "tfce" ] ; then
+	filename="GM_merg_mod_s${smoothing}_tfce_corrp_tstat${contrast}"
+else
+	filename=""
+fi
+
+if [ ! -f ${filename}.nii.gz ] ; then
+	echo "error: ${filename} does not exist"
+	exit 0
+fi
+
+fslview template_GM -b .1,1 ${filename} -l Red-Yellow -b ${alpha},1

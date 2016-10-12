@@ -1,0 +1,225 @@
+20151001_112124 [INFO] Running permutation 0
+20151001_112124 [INFO]   GM_accumbens_L
+20151001_112125 [INFO] Time elapsed: 00:00:00
+20151001_112125 [INFO] Running permutation 1
+20151001_112125 [INFO]   GM_accumbens_L
+20151001_112125 [INFO] Time elapsed: 00:00:00
+20151001_112125 [INFO] Running permutation 2
+20151001_112125 [INFO]   GM_accumbens_L
+20151001_112126 [INFO] Time elapsed: 00:00:00
+20151001_112126 [INFO] 
+20151001_112126 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script uses Gaussian Process classifiers to rank ROIs.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+import glob
+import json
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import prepare
+from scripts import timing
+
+import GPy
+import multiprocessing
+import numpy as np
+import pandas as pd
+
+from sklearn.cross_validation import StratifiedKFold
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_subject_ids_and_labels(label1, label2):
+
+	roi_data = pd.read_csv(const.ROI_FILES_SUBCORTICAL[0], index_col='id')
+	meta_file = os.path.join(const.DATA_DIR, 'meta.txt')
+	roi_data = prepare.add_feature_columns(roi_data, ['age', 'diagnosis'], meta_file)
+	roi_data = prepare.match_ages(roi_data, label1, label2, 2, nr_labels=2)
+
+	return roi_data.index, roi_data['diagnosis']
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_bootstrap_subject_sets(ids, labels, nr_perm):
+
+	table = {}
+	for i in range(nr_perm):
+		table[i] = {}
+		j = 0
+		for train, test in StratifiedKFold(labels, n_folds=10, shuffle=True):
+			table[i][j] = {}
+			train_ids = ids[train]
+			train_ids = np.random.choice(train_ids, len(train_ids), True)
+			table[i][j]['train'] = list(train_ids)
+			test_ids = ids[test]
+			test_ids = np.random.choice(test_ids, len(test_ids), True)
+			table[i][j]['test']  = list(test_ids)
+			j += 1
+	return table
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def build_kernel(name, input_dim):
+
+	if name == 'linear':
+		return GPy.kern.Linear(input_dim)
+	if name == 'rbf':
+		return GPy.kern.RBF(input_dim, lengthscale=5.)
+	if name == 'matern32':
+		return GPy.kern.Matern32(input_dim, lengthscale=4.)
+	if name == 'exponential':
+		return GPy.kern.Exponential(input_dim, lengthscale=2.)
+	return None
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run_gp(roi_name, i, kernels, n_iters):
+
+	# Specify meta file with additional features
+	meta_file = os.path.join(const.DATA_DIR, 'meta.txt')
+	# Specify ROI file name to load
+	roi_file = os.path.join(const.ROI_DIR, roi_name + '_s0.txt')
+	# Load ROI voxel intensities
+	features = util.load_features(roi_file)
+	# Add columns for age, gender and diagnosis
+	features = prepare.add_feature_columns(features, ['age', 'gender', 'diagnosis'], meta_file)
+	# Match ages between HC and SZ patients
+	features = prepare.match_ages(features, 'HC', 'SZ', 2, nr_labels=2)
+	# Subtract age and gender confounds
+	features = prepare.residualize(features, ['age', 'gender'], verbose=False)
+	# Replace HC and SZ labels with -1 and 1
+	features['diagnosis'].replace(['HC', 'SZ'], [1, 0], inplace=True)
+	# Get number of features
+	nr_features = features.shape[1]
+
+	# Load subject ID sets for this permutation
+	subject_ids = {}
+	with open('ids.json', 'r') as f:
+		subject_ids = json.load(f)[i]
+	print(subject_ids)
+
+	return 
+
+	# Convert data to NumPy arrays
+	X, y = util.get_xy(
+		features,
+		target_column='diagnosis',
+		exclude_columns=['age', 'gender', 'diagnosis'])
+
+	scores = {}
+
+	for k in kernels:
+
+		scores[k] = []
+
+		for j in range(n_iters):
+
+			for train, test in StratifiedKFold(y, n_folds=10, shuffle=True):
+
+				X_train = X[train]
+				Y_train = np.array([y[train]]).T
+				kernel = build_kernel(k, X_train.shape[1])
+				classifier = GPy.models.GPClassification(X_train, Y_train, kernel)
+				for _ in range(5):
+					classifier.optimize()
+
+				X_test = X[test]
+				Y_test = np.array([y[test]]).T
+				probs = classifier.predict(X_test)[0]
+				error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+				scores[k].append(1.0 - error_rate)
+
+	# Determine file write mode
+	score_file = os.path.join(const.RESULTS_DIR, roi_name + '_scores.txt')
+	write_mode = 'w'
+	if os.path.isfile(score_file):
+		write_mode = 'a'
+
+	# Write output to file
+	with open(score_file, write_mode) as f:
+		if write_mode == 'w':
+			header = list()
+			header.append('roi_name')
+			header.append('nr_features')
+			for k in kernels:
+				header.append(k)
+			f.write(','.join(header) + '\n')
+		line = list()
+		line.append(roi_name)
+		line.append(str(nr_features))
+		for k in kernels:
+			line.append(str(np.mean(scores[k])))
+		f.write(','.join(line) + '\n')
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run():
+
+	# We're trying to obtain a stable ranking of sub-cortical regions of interest (ROIs). If we look
+	# at a single run, then we get a mean accuracy score for each ROI. We can sort these scores to
+	# obtain a ranking. To make sure this ranking is stable we need to introduce some randomness into
+	# the procedure. We can do this, e.g., using bootstrapping.
+
+	# Create results output directory. If it contains ROI score files
+	# delete all of them.
+	if not os.path.isdir(const.RESULTS_DIR):
+		os.mkdir(const.RESULTS_DIR)
+	for f in glob.glob(os.path.join(const.RESULTS_DIR, 'GM_*_scores.txt')):
+		os.remove(f)
+
+	# Delete temporary log files and create new logger
+	for f in glob.glob(os.path.join(const.LOG_DIR, '*.tmp')):
+		os.remove(f)
+	LOG = logging.Logger()
+
+	# Set parameters
+	kernels  = ['linear', 'rbf']
+	parallel = True
+	test_run = False
+	nr_perm  = 3
+	nr_iter  = 1
+
+	# Get subject IDs and corresponding labels
+	ids, labels = get_subject_ids_and_labels('HC', 'SZ')
+	ids = get_bootstrap_subject_sets(ids, labels, nr_perm)
+	with open('ids.json', 'w') as f:
+		json.dump(ids, f)
+
+	for i in range(nr_perm):
+
+		LOG.info('Running permutation {}'.format(i))
+		start = timing.now()
+
+		# Run classifier on each ROI
+		threads = []
+		# for roi_name in const.ROI_NAMES_SUBCORTICAL:
+		for roi_name in [const.ROI_NAMES_SUBCORTICAL[0]]:
+			LOG.info('  {}'.format(roi_name))
+			if not parallel:
+				run_gp(roi_name, i, kernels, nr_iter)
+			else:
+				thread = multiprocessing.Process(
+					target=run_gp, args=(roi_name, i, kernels, nr_iter))
+				threads.append(thread)
+				thread.start()
+		if parallel:
+			for thread in threads:
+				thread.join()
+
+		LOG.info('Time elapsed: {}'.format(timing.elapsed(start)))
+
+	# Close log
+	LOG.append_file(__file__)
+	LOG.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+	run()

@@ -59,7 +59,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>/Users/Ralph/.virtualenvs/jupyter/bin/jupyter notebook</string>
+					<string>/Users/Ralph/.virtualenvs/jupyter/bin/jupyter notebook --port=9999</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>

@@ -1,0 +1,300 @@
+#!/bin/bash
+
+Usage() {
+    echo ""
+    echo "usage: fslvbm_run <subjects> <design.mat> <design.con> [-prep_only] [kernel]"
+    echo ""
+    echo "       <subjects>   : file with subject IDs"
+    echo "       <design.mat> : design.mat file to use"
+    echo "       <design.con> : design.con file to use"
+    echo "       [-prep_only] : do only preparation phase (register to template)"
+    echo "       [kernel]     : smoothing kernel in mm's"
+    echo ""
+    exit 1
+}
+
+[ "$1" = "" ] && Usage
+
+subj_file=$1
+design_mat=$2
+design_con=$3
+prep_only="false"
+kernel="8"
+
+if [ "$4" != "" ] ; then
+	prep_only="true"
+	kernel="$5"
+fi
+
+prior=${FSLDIR}/data/standard/tissuepriors/avg152T1_gray
+
+if [ -d ./output ] ; then
+	echo "warning: output directory exists, remove it to continue"
+	exit 1
+fi
+
+rm -rf output
+mkdir output
+
+# ----------------------------------------------------------------------------------------
+# Reorient images to standard space
+
+echo "`date` - reorienting images" >> timing.txt
+echo "${FSLDIR}/bin/fslreorient2std \${1} output/\${1}_reorient" > reorient.sh
+chmod a+x reorient.sh
+parallel -a ${subj_file} ./reorient.sh
+rm reorient.sh
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Running slicesdir on reoriented images
+
+echo "`date` - running slicesdir on reoriented images" >> timing.txt
+imagelist=""
+for f in `more ${subj_file}` ; do
+	imagelist="$imagelist output/${f}_reorient"
+done
+${FSLDIR}/bin/slicesdir ${imagelist}
+rm -rf slicesdir_reorient
+mv slicesdir slicesdir_reorient
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Run robust brain extraction
+
+echo "`date` - running robust brain extraction" >> timing.txt
+echo "${FSLDIR}/bin/bet output/\${1}_reorient output/\${1}_brain" > bet.sh
+echo "${FSLDIR}/bin/standard_space_roi output/\${1}_brain output/\${1}_cut -roiNONE -ssref ${FSLDIR}/data/standard/MNI152_T1_2mm_brain -altinput output/\${1}_reorient" >> bet.sh
+echo "${FSLDIR}/bin/bet output/\${1}_cut output/\${1}_brain -f 0.4 -R" >> bet.sh
+chmod a+x bet.sh
+parallel -a ${subj_file} ./bet.sh
+rm bet.sh
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Running slicesdir on brain-extracted images
+
+echo "`date` - running slicesdir on brain-extracted images" >> timing.txt
+imagelist=""
+for f in `more ${subj_file}` ; do
+	imagelist="$imagelist output/${f}_brain"
+done
+${FSLDIR}/bin/slicesdir ${imagelist}
+rm -rf slicesdir_bet
+mv slicesdir slicesdir_bet
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Segment brains into white and gray matter
+
+echo "`date` - segmenting images into GM and WM" >> timing.txt
+echo "${FSLDIR}/bin/fast -R 0.3 -H 0.1 output/\${1}_brain" > segment.sh
+echo "${FSLDIR}/bin/immv output/\${1}_brain_pve_1 output/\${1}_GM" >> segment.sh
+chmod a+x segment.sh
+parallel -a ${subj_file} ./segment.sh
+rm segment.sh
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Running slicesdir on GM segmented images
+
+echo "`date` - running slicesdir on GM segmented images" >> timing.txt
+imagelist=""
+for f in `more ${subj_file}` ; do
+	imagelist="$imagelist output/${f}_GM"
+done
+${FSLDIR}/bin/slicesdir ${imagelist}
+rm -rf slicesdir_segm
+mv slicesdir slicesdir_segm
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Register images to spatial prior images
+
+echo "`date` - registering images to GM spatial prior" >> timing.txt
+echo "${FSLDIR}/bin/fsl_reg output/\${1}_GM ${prior} output/\${1}_GM_to_prior -a" > register.sh
+chmod a+x register.sh
+parallel -a ${subj_file} ./register.sh
+rm register.sh
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Run slicesdir on 1st-pass registration
+
+echo "`date` - running slicesdir on 1st-pass registration" >> timing.txt
+imagelist=""
+for f in `more ${subj_file}` ; do
+	imagelist="$imagelist output/${f}_GM_to_prior"
+done
+${FSLDIR}/bin/slicesdir ${imagelist}
+rm -rf slicesdir_reg1
+mv slicesdir slicesdir_reg1
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Create initial template by averaging images
+
+echo "`date` - creating initial GM template" >> timing.txt
+mergelist=""
+for f in `more ${subj_file}` ; do
+	mergelist="${mergelist} output/${f}_GM_to_prior"
+done
+${FSLDIR}/bin/fslmerge -t output/template_4D_GM ${mergelist}
+${FSLDIR}/bin/fslmaths output/template_4D_GM -Tmean output/template_GM
+${FSLDIR}/bin/fslswapdim output/template_GM -x y z output/template_GM_flipped
+${FSLDIR}/bin/fslmaths output/template_GM -add output/template_GM_flipped -div 2 output/template_GM_init
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Register normalized images to template average
+
+echo "`date` - registering normalized images to template average" >> timing.txt
+prior=output/template_GM_init
+echo "${FSLDIR}/bin/fsl_reg output/\${1}_GM ${prior} output/\${1}_GM_to_prior_init -fnirt \"--config=GM_2_MNI152GM_2mm.cnf\"" > register2.sh
+chmod a+x register2.sh
+parallel -a ${subj_file} ./register2.sh
+rm register2.sh
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Run slicesdir on template-registered images
+
+echo "`date` - running slicesdir on template-registered images" >> timing.txt
+imagelist=""
+for f in `more ${subj_file}` ; do
+	imagelist="$imagelist output/${f}_GM_to_prior_init"
+done
+${FSLDIR}/bin/slicesdir ${imagelist}
+rm -rf slicesdir_reg2_final
+mv slicesdir slicesdir_reg2_final
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Create final template by averaging images
+
+echo "`date` - creating final GM template" >> timing.txt
+mergelist=""
+for f in `more ${subj_file}` ; do
+	mergelist="${mergelist} output/${f}_GM_to_prior_init"
+done
+${FSLDIR}/bin/fslmerge -t output/template_4D_GM ${mergelist}
+${FSLDIR}/bin/fslmaths output/template_4D_GM -Tmean output/template_GM
+${FSLDIR}/bin/fslswapdim output/template_GM -x y z output/template_GM_flipped
+${FSLDIR}/bin/fslmaths output/template_GM -add output/template_GM_flipped -div 2 output/template_GM
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Register GM images to final template and modulate (multiply by Jacobian determinant field)
+
+echo "`date` - register GM images to final template" >> timing.txt
+echo "${FSLDIR}/bin/fsl_reg output/\${1}_GM output/template_GM output/\${1}_GM_to_template_GM -fnirt \"--config=GM_2_MNI152GM_2mm.cnf --jout=output/\${1}_JAC_nl\"" > register3.sh
+echo "${FSLDIR}/bin/fslmaths output/\${1}_GM_to_template_GM -mul output/\${1}_JAC_nl output/\${1}_GM_to_template_GM_mod -odt float" >> register3.sh
+chmod a+x register3.sh
+parallel -a ${subj_file} ./register3.sh
+rm register3.sh
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Run slicesdir on template-registered images
+
+echo "`date` - running slicesdir on final template-registered images" >> timing.txt
+imagelist=""
+for f in `more ${subj_file}` ; do
+	imagelist="$imagelist output/${f}_GM_to_template_GM_mod"
+done
+${FSLDIR}/bin/slicesdir ${imagelist}
+rm -rf slicesdir_reg3_final
+mv slicesdir slicesdir_reg3_final
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Merging registered images
+
+echo "`date` - merging registered images" >> timing.txt
+
+mkdir -p output/stats
+${FSLDIR}/bin/imcp output/template_GM output/stats/template_GM
+
+mergelist=""
+mergelist_mod=""
+for f in `more ${subj_file}` ; do
+	mergelist="${mergelist} output/${f}_GM_to_template_GM"
+	mergelist_mod="${mergelist_mod} output/${f}_GM_to_template_GM_mod"
+done
+
+${FSLDIR}/bin/fslmerge -t output/stats/GM_merg ${mergelist}
+${FSLDIR}/bin/fslmerge -t output/stats/GM_merg_mod ${mergelist_mod}
+${FSLDIR}/bin/fslmaths output/stats/GM_merg -Tmean -thr 0.01 -bin output/stats/GM_mask -odt char
+
+echo "`date` - done" >> timing.txt
+
+# ----------------------------------------------------------------------------------------
+# Quit if '-prep_only' argument was given. Smooth the images first.
+
+if [ "${prep_only}" == "true" ] ; then
+
+	if [ -f smooth.sh ] ; then
+		rm smooth.sh
+	fi
+	echo "`date` - smoothing images with ${kernel} mm kernel" >> timing.txt
+	echo "${FSLDIR}/bin/fslmaths output/\${2}_GM_to_template_GM_mod -s \${1} output/\${2}_GM_to_template_GM_mod_s\${1}" >> smooth.sh
+	chmod a+x smooth.sh
+	parallel -a ${subj_file} ./smooth.sh ${kernel}
+	rm smooth.sh
+	echo "`date` - done"
+	more timing.txt
+	exit 1
+
+fi
+
+# ----------------------------------------------------------------------------------------
+# Smooth images and run preliminary permutation testing
+
+if [ ! -f ${design_mat} ] || [ ! -f ${design_con} ] ; then
+	echo "error: design.mat or design.con does not exist"
+	exit 0
+fi
+
+mkdir -p output/stats
+
+cp ${design_mat} output/stats
+cp ${design_con} output/stats
+
+if [ -f smooth.sh ] ; then
+	rm smooth.sh
+fi
+echo "`date` - smoothing images and running randomize" >> timing.txt
+echo "dir=output/stats" >> smooth.sh
+echo "echo \"smoothing with \${1} mm kernel\"" >> smooth.sh
+echo "${FSLDIR}/bin/fslmaths \${dir}/GM_merg_mod -s \${1} \${dir}/GM_merg_mod_s\${1}" >> smooth.sh
+echo "echo \"running initial randomization test procedure\"" >> smooth.sh
+echo "${FSLDIR}/bin/randomise -i \${dir}/GM_merg_mod_s\${1} -o \${dir}/GM_merg_mod_s\${1} -m \${dir}/GM_mask -d \${dir}/design.mat -t \${dir}/design.con -n 5000 -T -V" >> smooth.sh
+chmod a+x smooth.sh
+parallel ./smooth.sh ::: 2 3 4
+rm smooth.sh
+echo "`date` - done" >> timing.txt
+
+more timing.txt
+
+echo "Now run FSLView, for example:"
+echo "fslview output/stats/template_GM -b .1,1 output/stats/GM_merg_mod_s3_tstat1 -l Red-Yellow -b 0.8,1"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

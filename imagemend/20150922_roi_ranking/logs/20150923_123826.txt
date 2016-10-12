@@ -1,0 +1,215 @@
+20150923_123826 [INFO] Running permutation 0
+20150923_123826 [INFO]   GM_accumbens_L
+20150923_123827 [INFO]   GM_accumbens_R
+20150923_123827 [INFO]   GM_amygdala_L
+20150923_123829 [INFO]   GM_amygdala_R
+20150923_123830 [INFO]   GM_brainstem
+20150923_123840 [INFO]   GM_caudate_L
+20150923_123842 [INFO]   GM_caudate_R
+20150923_123844 [INFO]   GM_hippocampus_L
+20150923_123847 [INFO]   GM_hippocampus_R
+20150923_123850 [INFO]   GM_pallidum_L
+20150923_123852 [INFO]   GM_pallidum_R
+20150923_123853 [INFO]   GM_putamen_L
+20150923_123856 [INFO]   GM_putamen_R
+20150923_123858 [INFO]   GM_thalamus_L
+20150923_123901 [INFO]   GM_thalamus_R
+20150923_123904 [INFO] Time elapsed: 00:00:38
+20150923_123904 [INFO] Running permutation 1
+20150923_123904 [INFO]   GM_accumbens_L
+20150923_123905 [INFO]   GM_accumbens_R
+20150923_123906 [INFO]   GM_amygdala_L
+20150923_123907 [INFO]   GM_amygdala_R
+20150923_123909 [INFO]   GM_brainstem
+20150923_123919 [INFO]   GM_caudate_L
+20150923_123921 [INFO]   GM_caudate_R
+20150923_123923 [INFO]   GM_hippocampus_L
+20150923_123926 [INFO]   GM_hippocampus_R
+20150923_123929 [INFO]   GM_pallidum_L
+20150923_123931 [INFO]   GM_pallidum_R
+20150923_123932 [INFO]   GM_putamen_L
+20150923_123934 [INFO]   GM_putamen_R
+20150923_123937 [INFO]   GM_thalamus_L
+20150923_123940 [INFO]   GM_thalamus_R
+20150923_123944 [INFO] Time elapsed: 00:00:39
+20150923_123944 [INFO] 
+20150923_123944 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script uses Gaussian Process classifiers to rank ROIs.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import prepare
+from scripts import timing
+
+import GPy
+import multiprocessing
+import numpy as np
+import pandas as pd
+
+from sklearn.cross_validation import StratifiedKFold
+
+LOG = logging.Logger()
+# LOG.disable()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_subject_ids():
+
+	meta_file = os.path.join(const.DATA_DIR, 'meta.txt')
+	meta_data = pd.read_csv(meta_file, index_col='id')
+	return meta_data.index
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_bootstrap_sample(subject_ids):
+
+	return np.random.choice(subject_ids, subject_ids.shape[0], True)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def build_kernel(name, input_dim):
+
+	if name == 'linear':
+		return GPy.kern.Linear(input_dim)
+	if name == 'rbf':
+		return GPy.kern.RBF(input_dim, lengthscale=5.)
+	if name == 'matern32':
+		return GPy.kern.Matern32(input_dim, lengthscale=4.)
+	if name == 'exponential':
+		return GPy.kern.Exponential(input_dim, lengthscale=2.)
+	return None
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run_gp(roi_name, subjects_ids, kernels, n_iters, test_run=False):
+
+	# Specify meta file with additional features
+	meta_file = os.path.join(const.DATA_DIR, 'meta.txt')
+	# Specify ROI file name to load
+	roi_file = os.path.join(const.ROI_DIR, roi_name + '_s0.txt')
+	# Load ROI voxel intensities
+	features = util.load_features(roi_file)
+	# Add columns for age, gender and diagnosis
+	features = prepare.add_feature_columns(features, ['age', 'gender', 'diagnosis'], meta_file)
+	# Match ages between HC and SZ patients
+	features = prepare.match_ages(features, 'HC', 'SZ', 2, nr_labels=2)
+	# Subtract age and gender confounds
+	features = prepare.residualize(features, ['age', 'gender'], verbose=False)
+	# Replace HC and SZ labels with -1 and 1
+	features['diagnosis'].replace(['HC', 'SZ'], [1, 0], inplace=True)
+	# Select only subjects we want
+	features = features.loc[subjects_ids]
+	# Get number of features
+	nr_features = features.shape[1]
+
+	# Convert data to NumPy arrays
+	X, y = util.get_xy(
+		features,
+		target_column='diagnosis',
+		exclude_columns=['age', 'gender', 'diagnosis'])
+
+	scores = {}
+
+	if not test_run:
+		for kernel in kernels:
+			for i in range(n_iters):
+				for train, test in StratifiedKFold(y, n_folds=10):
+
+					X_train = X[train]
+					Y_train = np.array([y[train]]).T
+					kernel = build_kernel(kernel, X_train.shape[1])
+					classifier = GPy.models.GPClassification(X_train, Y_train, kernel)
+					for _ in range(5):
+						classifier.optimize()
+
+					X_test = X[test]
+					Y_test = np.array([y[test]]).T
+					probs = classifier.predict(X_test)[0]
+					error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+					scores[kernel].append(1.0 - error_rate)
+
+	if test_run:
+		for kernel in kernels:
+			scores[kernel] = list(np.ones(n_iters * 10))
+
+	# Determine file write mode
+	score_file = os.path.join(const.RESULTS_DIR, roi_name + '_scores.txt')
+	write_mode = 'w'
+	if os.path.isfile(score_file):
+		write_mode = 'a'
+
+	# Write output to file
+	with open(score_file, write_mode) as f:
+		line = list()
+		line.append(roi_name)
+		line.append(str(nr_features))
+		for kernel in kernels:
+			line.append(str(np.mean(scores[kernel])))
+		f.write(','.join(line) + '\n')
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run():
+
+	# We're trying to obtain a stable ranking of sub-cortical regions of interest (ROIs). If we look
+	# at a single run, then we get a mean accuracy score for each ROI. We can sort these scores to
+	# obtain a ranking. To make sure this ranking is stable we need to introduce some randomness into
+	# the procedure. We can do this, e.g., using bootstrapping.
+
+	# Create results output directory
+	if not os.path.isdir(const.RESULTS_DIR):
+		os.mkdir(const.RESULTS_DIR)
+
+	# Set parameters
+	kernels  = ['linear', 'rbf']
+	parallel = False
+	test_run = True
+	nr_perm  = 2
+	nr_iter  = 1
+
+	subjects_ids = get_subject_ids()
+
+	for i in range(nr_perm):
+
+		LOG.info('Running permutation {}'.format(i))
+		start = timing.now()
+
+		ids_perm = get_bootstrap_sample(subjects_ids)
+
+		# Run classifier on each ROI
+		threads = []
+		for roi_name in const.ROI_NAMES_SUBCORTICAL:
+			LOG.info('  {}'.format(roi_name))
+			if not parallel:
+				run_gp(roi_name, ids_perm, kernels, nr_iter, test_run)
+			else:
+				thread = multiprocessing.Process(
+					target=run_gp, args=(roi_name, ids_perm, kernels, nr_iter, test_run))
+				threads.append(thread)
+				thread.start()
+		if parallel:
+			for thread in threads:
+				thread.join()
+
+		LOG.info('Time elapsed: {}'.format(timing.elapsed(start)))
+
+		# Calculate ranking
+		pass
+
+	# Close log
+	LOG.append_file(__file__)
+	LOG.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+	run()

@@ -1,0 +1,205 @@
+20150827_085212 [INFO] svm-sigmoid: 0.718382352941 +/- 0.100172186318
+20150827_085212 [INFO] svm-rbf: 0.718566176471 +/- 0.103044361363
+20150827_085212 [INFO] svm-poly: 0.727389705882 +/- 0.104294705767
+20150827_085212 [INFO] 
+20150827_085212 [INFO] Pairwise t-test p-values:
+20150827_085212 [INFO] svm-sigmoid <-> svm-sigmoid: 1.0
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: 0.996980430213
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: 0.853858445817
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: 0.996980430213
+20150827_085212 [INFO] svm-rbf <-> svm-rbf: 1.0
+20150827_085212 [INFO] svm-rbf <-> svm-poly: 0.858740602442
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: 0.853858445817
+20150827_085212 [INFO] svm-poly <-> svm-rbf: 0.858740602442
+20150827_085212 [INFO] svm-poly <-> svm-poly: 1.0
+20150827_085212 [INFO] 
+20150827_085212 [INFO] Pairwise McNemar's test:
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: 1.0
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: nan
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: 0.563702861651
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: nan
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: nan
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: 0.563702861651
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: chi-square: 0.0832645166636
+20150827_085212 [INFO] 
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: 1.0
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: 0.563702861651
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: 1.0
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: nan
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: nan
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: nan
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: nan
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: chi-square: nan
+20150827_085212 [INFO] 
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: 1.0
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: nan
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: 0.563702861651
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: nan
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: nan
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: 0.563702861651
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: chi-square: 0.0832645166636
+20150827_085212 [INFO] 
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 1.0
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 0.563702861651
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 0.15729920705
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 1.0
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: nan
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 0.15729920705
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-rbf <-> svm-poly: chi-square: 0.0832645166636
+20150827_085212 [INFO] 
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: 1.0
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: 0.563702861651
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: 1.0
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: nan
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: nan
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: nan
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: nan
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: chi-square: nan
+20150827_085212 [INFO] 
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 1.0
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 0.563702861651
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 0.15729920705
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 1.0
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: nan
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 0.15729920705
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 0.317310507863
+20150827_085212 [INFO] svm-poly <-> svm-rbf: chi-square: 0.0832645166636
+20150827_085212 [INFO] 
+20150827_085212 [INFO] Pairwise Wilcoxon ranked-sign test:
+20150827_085212 [INFO] svm-sigmoid <-> svm-rbf: wilcoxon: 0.595076495624
+20150827_085212 [INFO] svm-sigmoid <-> svm-poly: wilcoxon: 0.108809430041
+20150827_085212 [INFO] 
+20150827_085212 [INFO] svm-rbf <-> svm-sigmoid: wilcoxon: 0.595076495624
+20150827_085212 [INFO] svm-rbf <-> svm-poly: wilcoxon: 0.394626866243
+20150827_085212 [INFO] 
+20150827_085212 [INFO] svm-poly <-> svm-sigmoid: wilcoxon: 0.108809430041
+20150827_085212 [INFO] svm-poly <-> svm-rbf: wilcoxon: 0.394626866243
+20150827_085212 [INFO] 
+20150827_085212 [INFO] 
+20150827_085212 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script generates a statistical report from the output.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import evaluate
+
+import numpy as np
+
+from scipy.stats import ttest_ind
+from scipy.stats import chisquare
+from scipy.stats import wilcoxon
+
+RESULTS_FILE = '/Users/Ralph/experiments/oslo/experiments/20150818_perf_eval/results/20150826_101740_perf_info.json'
+
+REPORT = logging.Logger(log_dir=const.REPORTS_DIR, to_file=True)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run(file_name):
+
+    results = util.from_file(file_name)
+
+    # Calculate accuracies for each classifier based on the true and
+    # predicted labels
+    accuracies = {}
+    for classifier in results.keys():
+        accuracies[classifier] = []
+        for info in results[classifier]:
+            y_true = info['true']
+            y_pred = info['pred']
+            accuracies[classifier].append(evaluate.get_accuracy_score(y_true, y_pred))
+
+    # Print mean accuracies and standard deviations
+    for classifier in accuracies.keys():
+        REPORT.info('{}: {} +/- {}'.format(classifier, np.mean(accuracies[classifier]), np.std(accuracies[classifier])))
+    REPORT.info()
+
+    # Run matched-samples, equal-variance t-test
+    REPORT.info('Pairwise t-test p-values:')
+    for classifier1 in accuracies.keys():
+        for classifier2 in accuracies.keys():
+            scores1 = accuracies[classifier1]
+            scores2 = accuracies[classifier2]
+            p_value = ttest_ind(scores1, scores2, equal_var=True)[1]
+            REPORT.info('{} <-> {}: {}'.format(classifier1, classifier2, p_value))
+    REPORT.info()
+
+    # Run McNemar's test
+    REPORT.info('Pairwise McNemar\'s test:')
+    for classifier1 in results.keys():
+        for classifier2 in results.keys():
+
+            if classifier1 == classifier2:
+                continue
+
+            for i in range(len(results[classifier1])):
+
+                y_true  = results[classifier1][i]['true']
+                y_pred1 = results[classifier1][i]['pred']
+                y_pred2 = results[classifier2][i]['pred']
+
+                c00 = 0
+                c01 = 0
+                c10 = 0
+                c11 = 0
+
+                for j in range(len(y_true)):
+                    if not y_true[j] == y_pred1[j] and not y_true[j] == y_pred2[j]:
+                        c00 += 1
+                    if not y_true[j] == y_pred1[j] and y_true[j] == y_pred2[j]:
+                        c01 += 1
+                    if y_true[j] == y_pred1[j] and not y_true[j] == y_pred2[j]:
+                        c10 += 1
+                    if y_true[j] == y_pred1[j] and y_true[j] == y_pred2[j]:
+                        c11 += 1
+
+                p_value = chisquare([c01, c10])[1]
+                REPORT.info('{} <-> {}: chi-square: {}'.format(classifier1, classifier2, p_value))
+
+            REPORT.info()
+
+    # Run Wilcoxon ranked-sign test
+    REPORT.info('Pairwise Wilcoxon ranked-sign test:')
+    for classifier1 in accuracies.keys():
+        for classifier2 in accuracies.keys():
+            if classifier1 == classifier2:
+                continue
+            scores1 = accuracies[classifier1]
+            scores2 = accuracies[classifier2]
+            p_value = wilcoxon(scores1, scores2, zero_method='wilcox')[1]
+            REPORT.info('{} <-> {}: wilcoxon: {}'.format(classifier1, classifier2, p_value))
+        REPORT.info()
+
+    # Close the report file
+    REPORT.append_file(__file__)
+    REPORT.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+    run(RESULTS_FILE)

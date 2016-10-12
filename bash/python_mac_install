@@ -1,0 +1,2 @@
+PYTHON=/System/Library/Frameworks/Python.framework/Versions/Current/bin/python
+${PYTHON} -m pip $1

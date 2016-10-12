@@ -1,0 +1,154 @@
+20150922_171524 [INFO] Processing ROI GM_accumbens_L
+20150922_172144 [INFO] GM_accumbens_L - Overall score (rbf): 0.647610294118
+20150922_172144 [INFO] GM_accumbens_L - Overall score (linear): 0.653676470588
+20150922_172144 [INFO] Processing ROI GM_accumbens_R
+20150922_172738 [INFO] GM_accumbens_R - Overall score (rbf): 0.598345588235
+20150922_172738 [INFO] GM_accumbens_R - Overall score (linear): 0.598345588235
+20150922_172738 [INFO] Processing ROI GM_amygdala_L
+20150922_173349 [INFO] GM_amygdala_L - Overall score (rbf): 0.636029411765
+20150922_173349 [INFO] GM_amygdala_L - Overall score (linear): 0.580698529412
+20150922_173349 [INFO] Processing ROI GM_amygdala_R
+20150922_174004 [INFO] GM_amygdala_R - Overall score (rbf): 0.622426470588
+20150922_174004 [INFO] GM_amygdala_R - Overall score (linear): 0.636029411765
+20150922_174004 [INFO] Processing ROI GM_brainstem
+20150922_175229 [INFO] GM_brainstem - Overall score (rbf): 0.644852941176
+20150922_175229 [INFO] GM_brainstem - Overall score (linear): 0.635294117647
+20150922_175229 [INFO] Processing ROI GM_caudate_L
+20150922_175902 [INFO] GM_caudate_L - Overall score (rbf): 0.600919117647
+20150922_175902 [INFO] GM_caudate_L - Overall score (linear): 0.629227941176
+20150922_175902 [INFO] Processing ROI GM_caudate_R
+20150922_180530 [INFO] GM_caudate_R - Overall score (rbf): 0.603860294118
+20150922_180530 [INFO] GM_caudate_R - Overall score (linear): 0.588970588235
+20150922_180530 [INFO] Processing ROI GM_hippocampus_L
+20150922_181154 [INFO] GM_hippocampus_L - Overall score (rbf): 0.564889705882
+20150922_181154 [INFO] GM_hippocampus_L - Overall score (linear): 0.524632352941
+20150922_181154 [INFO] Processing ROI GM_hippocampus_R
+20150922_181839 [INFO] GM_hippocampus_R - Overall score (rbf): 0.610661764706
+20150922_181839 [INFO] GM_hippocampus_R - Overall score (linear): 0.632904411765
+20150922_181839 [INFO] Processing ROI GM_pallidum_L
+20150922_182459 [INFO] GM_pallidum_L - Overall score (rbf): 0.650735294118
+20150922_182459 [INFO] GM_pallidum_L - Overall score (linear): 0.638235294118
+20150922_182459 [INFO] Processing ROI GM_pallidum_R
+20150922_183108 [INFO] GM_pallidum_R - Overall score (rbf): 0.638419117647
+20150922_183108 [INFO] GM_pallidum_R - Overall score (linear): 0.641360294118
+20150922_183108 [INFO] Processing ROI GM_putamen_L
+20150922_183826 [INFO] GM_putamen_L - Overall score (rbf): 0.691176470588
+20150922_183826 [INFO] GM_putamen_L - Overall score (linear): 0.675367647059
+20150922_183826 [INFO] Processing ROI GM_putamen_R
+20150922_184533 [INFO] GM_putamen_R - Overall score (rbf): 0.650919117647
+20150922_184533 [INFO] GM_putamen_R - Overall score (linear): 0.653860294118
+20150922_184533 [INFO] Processing ROI GM_thalamus_L
+20150922_185225 [INFO] GM_thalamus_L - Overall score (rbf): 0.634926470588
+20150922_185225 [INFO] GM_thalamus_L - Overall score (linear): 0.628308823529
+20150922_185225 [INFO] Processing ROI GM_thalamus_R
+20150922_185936 [INFO] GM_thalamus_R - Overall score (rbf): 0.688235294118
+20150922_185936 [INFO] GM_thalamus_R - Overall score (linear): 0.672610294118
+20150922_185936 [INFO] 
+20150922_185936 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script uses Gaussian Process classifiers to rank ROIs.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import prepare
+
+import GPy
+import numpy as np
+
+from sklearn.cross_validation import StratifiedKFold
+
+LOG = logging.Logger()
+# LOG.disable()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def build_kernel(name, input_dim):
+
+	if name == 'linear':
+		return GPy.kern.Linear(input_dim)
+	if name == 'rbf':
+		return GPy.kern.RBF(input_dim, lengthscale=5.)
+	if name == 'matern32':
+		return GPy.kern.Matern32(input_dim, lengthscale=4.)
+	if name == 'exponential':
+		return GPy.kern.Exponential(input_dim, lengthscale=2.)
+	return None
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run_gp(features, n_iters=10):
+
+	X, y = util.get_xy(
+		features,
+		target_column='diagnosis',
+		exclude_columns=['age', 'gender', 'diagnosis'])
+
+	kernels = ['linear', 'rbf']
+	scores = {}
+
+	for k in kernels:
+
+		scores[k] = []
+
+		for i in range(n_iters):
+
+			for train, test in StratifiedKFold(y, n_folds=10):
+
+				X_train = X[train]
+				Y_train = np.array([y[train]]).T
+				kernel = build_kernel(k, X_train.shape[1])
+				classifier = GPy.models.GPClassification(X_train, Y_train, kernel)
+				for _ in range(5):
+					classifier.optimize()
+
+				X_test = X[test]
+				Y_test = np.array([y[test]]).T
+				probs = classifier.predict(X_test)[0]
+				error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+				scores[k].append(1.0 - error_rate)
+
+	return scores
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run():
+
+	file_name = os.path.join(const.DATA_DIR, 'meta.txt')
+
+	for roi_name in const.ROI_NAMES_SUBCORTICAL:
+
+		LOG.info('Processing ROI {}'.format(roi_name))
+		roi_file = os.path.join(const.ROI_DIR, roi_name + '_s0.txt')
+
+		# Load ROI voxel intensities
+		features = util.load_features(roi_file)
+		# Add columns for age, gender and diagnosis
+		features = prepare.add_feature_columns(features, ['age', 'gender', 'diagnosis'], file_name)
+		# Match ages between HC and SZ patients
+		features = prepare.match_ages(features, 'HC', 'SZ', 2, nr_labels=2)
+		# Subtract age and gender confounds
+		features = prepare.residualize(features, ['age', 'gender'], verbose=False)
+		# Replace HC and SZ labels with -1 and 1
+		features['diagnosis'].replace(['HC', 'SZ'], [1, 0], inplace=True)
+
+		# Run GP classifier on this ROI
+		scores = run_gp(features, 10)
+		for k in scores.keys():
+			LOG.info('{} - Overall score ({}): {}'.format(roi_name, k, np.mean(scores[k])))
+
+	# Close log
+	LOG.append_file(__file__)
+	LOG.close()
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+	run()

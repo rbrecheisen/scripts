@@ -1,0 +1,185 @@
+20150903_162443 [INFO]   score: 0.794117647059
+20150903_162445 [INFO]   score: 0.764705882353
+20150903_162448 [INFO]   score: 0.529411764706
+20150903_162450 [INFO]   score: 0.764705882353
+20150903_162452 [INFO]   score: 0.764705882353
+20150903_162454 [INFO]   score: 0.735294117647
+20150903_162456 [INFO]   score: 0.71875
+20150903_162458 [INFO]   score: 0.78125
+20150903_162500 [INFO]   score: 0.625
+20150903_162502 [INFO]   score: 0.75
+20150903_162504 [INFO]   score: 0.794117647059
+20150903_162507 [INFO]   score: 0.764705882353
+20150903_162509 [INFO]   score: 0.529411764706
+20150903_162511 [INFO]   score: 0.764705882353
+20150903_162513 [INFO]   score: 0.764705882353
+20150903_162515 [INFO]   score: 0.735294117647
+20150903_162517 [INFO]   score: 0.71875
+20150903_162519 [INFO]   score: 0.78125
+20150903_162521 [INFO]   score: 0.625
+20150903_162524 [INFO]   score: 0.75
+20150903_162526 [INFO]   score: 0.794117647059
+20150903_162528 [INFO]   score: 0.764705882353
+20150903_162530 [INFO]   score: 0.529411764706
+20150903_162532 [INFO]   score: 0.764705882353
+20150903_162534 [INFO]   score: 0.764705882353
+20150903_162536 [INFO]   score: 0.735294117647
+20150903_162539 [INFO]   score: 0.71875
+20150903_162541 [INFO]   score: 0.78125
+20150903_162543 [INFO]   score: 0.625
+20150903_162545 [INFO]   score: 0.75
+20150903_162547 [INFO]   score: 0.794117647059
+20150903_162549 [INFO]   score: 0.764705882353
+20150903_162551 [INFO]   score: 0.529411764706
+20150903_162553 [INFO]   score: 0.764705882353
+20150903_162556 [INFO]   score: 0.764705882353
+20150903_162558 [INFO]   score: 0.735294117647
+20150903_162600 [INFO]   score: 0.71875
+20150903_162602 [INFO]   score: 0.78125
+20150903_162604 [INFO]   score: 0.625
+20150903_162606 [INFO]   score: 0.75
+20150903_162608 [INFO]   score: 0.794117647059
+20150903_162610 [INFO]   score: 0.764705882353
+20150903_162612 [INFO]   score: 0.529411764706
+20150903_162614 [INFO]   score: 0.764705882353
+20150903_162617 [INFO]   score: 0.764705882353
+20150903_162619 [INFO]   score: 0.735294117647
+20150903_162621 [INFO]   score: 0.71875
+20150903_162623 [INFO]   score: 0.78125
+20150903_162625 [INFO]   score: 0.625
+20150903_162627 [INFO]   score: 0.75
+20150903_162629 [INFO]   score: 0.794117647059
+20150903_162631 [INFO]   score: 0.764705882353
+20150903_162633 [INFO]   score: 0.529411764706
+20150903_162635 [INFO]   score: 0.764705882353
+20150903_162638 [INFO]   score: 0.764705882353
+20150903_162640 [INFO]   score: 0.735294117647
+20150903_162642 [INFO]   score: 0.71875
+20150903_162644 [INFO]   score: 0.78125
+20150903_162646 [INFO]   score: 0.625
+20150903_162648 [INFO]   score: 0.75
+20150903_162650 [INFO]   score: 0.794117647059
+20150903_162652 [INFO]   score: 0.764705882353
+20150903_162655 [INFO]   score: 0.529411764706
+20150903_162657 [INFO]   score: 0.764705882353
+20150903_162659 [INFO]   score: 0.764705882353
+20150903_162701 [INFO]   score: 0.735294117647
+20150903_162703 [INFO]   score: 0.71875
+20150903_162705 [INFO]   score: 0.78125
+20150903_162707 [INFO]   score: 0.625
+20150903_162709 [INFO]   score: 0.75
+20150903_162711 [INFO]   score: 0.794117647059
+20150903_162713 [INFO]   score: 0.764705882353
+20150903_162716 [INFO]   score: 0.529411764706
+20150903_162718 [INFO]   score: 0.764705882353
+20150903_162720 [INFO]   score: 0.764705882353
+20150903_162722 [INFO]   score: 0.735294117647
+20150903_162724 [INFO]   score: 0.71875
+20150903_162726 [INFO]   score: 0.78125
+20150903_162728 [INFO]   score: 0.625
+20150903_162730 [INFO]   score: 0.75
+20150903_162732 [INFO]   score: 0.794117647059
+20150903_162734 [INFO]   score: 0.764705882353
+20150903_162737 [INFO]   score: 0.529411764706
+20150903_162739 [INFO]   score: 0.764705882353
+20150903_162741 [INFO]   score: 0.764705882353
+20150903_162743 [INFO]   score: 0.735294117647
+20150903_162745 [INFO]   score: 0.71875
+20150903_162747 [INFO]   score: 0.78125
+20150903_162749 [INFO]   score: 0.625
+20150903_162751 [INFO]   score: 0.75
+20150903_162754 [INFO]   score: 0.794117647059
+20150903_162756 [INFO]   score: 0.764705882353
+20150903_162758 [INFO]   score: 0.529411764706
+20150903_162800 [INFO]   score: 0.764705882353
+20150903_162802 [INFO]   score: 0.764705882353
+20150903_162804 [INFO]   score: 0.735294117647
+20150903_162806 [INFO]   score: 0.71875
+20150903_162808 [INFO]   score: 0.78125
+20150903_162810 [INFO]   score: 0.625
+20150903_162813 [INFO]   score: 0.75
+20150903_162813 [INFO] overall score: 0.722794117647
+20150903_162813 [INFO] 
+20150903_162813 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script runs a Gaussian Process classifier on the FreeSurfer features.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import prepare
+
+import GPy
+import numpy as np
+
+from sklearn.cross_validation import StratifiedKFold
+
+LOG = logging.Logger()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run_gp(features, n_iters=10):
+
+    X, y = util.get_xy(
+        features,
+        target_column='diagnosis',
+        exclude_columns=['age', 'gender', 'diagnosis'])
+
+    scores = []
+
+    for i in range(n_iters):
+
+        for train, test in StratifiedKFold(y, n_folds=10):
+
+            X_train = X[train]
+            Y_train = np.array([y[train]]).T
+            classifier = GPy.models.GPClassification(
+                X_train, Y_train, GPy.kern.RBF(X_train.shape[1], lengthscale=4.0, ARD=False))
+            for _ in range(5):
+                classifier.optimize()
+
+            X_test = X[test]
+            Y_test = np.array([y[test]]).T
+            probs = classifier.predict(X_test)[0]
+            error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+            scores.append(1.0 - error_rate)
+            LOG.info('  score: {}'.format(scores[-1]))
+
+    return scores
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run():
+
+    # Load FreeSurfer features
+    features = util.load_features(const.FREESURFER_FILE)
+    # Perform age-matching between healthy and schizophrenia patients
+    features = prepare.match_ages(features, 'HC', 'SZ', 2, nr_labels=2)
+    # Remove constant features
+    features = prepare.remove_constant_features(features)
+    # Normalize numerical features across subjects (excluding 'age')
+    features = prepare.normalize_across_subjects(features, exclude=['age'])
+    # Subtract age and gender confounds
+    features = prepare.residualize(features, ['age', 'gender', 'EstimatedTotalIntraCranialVol'])
+    # Replace HC and SZ labels with -1 and 1
+    features['diagnosis'].replace(['HC', 'SZ'], [1, 0], inplace=True)
+
+    scores = run_gp(features, 10)
+    LOG.info('overall score: {}'.format(np.mean(scores)))
+
+    # Close log
+    LOG.append_file(__file__)
+    LOG.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+    run()

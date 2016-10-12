@@ -1,0 +1,159 @@
+20150903_151621 [INFO] overall score: 0.722794117647
+20150903_151621 [INFO] 
+20150903_151621 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script runs a Gaussian Process classifier on the FreeSurfer features.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import prepare
+
+import GPy
+import numpy as np
+
+from sklearn.cross_validation import StratifiedKFold
+
+from matplotlib import pyplot as plt
+
+LOG = logging.Logger()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run_gp(features, n_iters=10):
+
+    X, y = util.get_xy(
+        features,
+        target_column='diagnosis',
+        exclude_columns=['age', 'gender', 'diagnosis'])
+
+    k = 0
+    scores = []
+
+    for i in range(n_iters):
+
+        for train, test in StratifiedKFold(y, n_folds=10, shuffle=True):
+
+            max_score = 0
+            best_params = {
+                'variance': 0.0,
+                'length_scale': 0.0
+            }
+
+            # Iterate through a number of variance and length scale values to see which
+            # results in the highest classification performance. Each parameter combination
+            # is further averaged across 3-folds to get a more reliable estimate.
+            for variance in np.linspace(.1, 10, num=50):
+
+                for length_scale in np.linspace(.1, 10, num=50):
+
+                    score = []
+
+                    for train1, test1 in StratifiedKFold(y[train], n_folds=3):
+
+                        X_train = X[train1]
+                        Y_train = np.array([y[train1]]).T
+                        kernel = GPy.kern.RBF(X_train.shape[1], variance=variance, lengthscale=length_scale)
+                        classifier = GPy.models.GPClassification(X_train, Y_train, kernel)
+
+                        X_test = X[test1]
+                        Y_test = np.array([y[test1]]).T
+                        probs = classifier.predict(X_test)[0]
+                        error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+                        score.append(1.0 - error_rate)
+
+                    # The score should actually be the mean of the grid search scores
+                    score = np.mean(score)
+
+                    # Check whether we outperformed the previous max. score
+                    if score > max_score:
+                        max_score = score
+                        best_params['variance'] = variance
+                        best_params['length_scale'] = length_scale
+
+            # Refit classifier with best parameters on all training data
+            LOG.info('Refitting classifier with optimized params...')
+            X_train = X[train]
+            Y_train = np.array([y[train]]).T
+            kernel = GPy.kern.RBF(X_train.shape[1], best_params['variance'], best_params['length_scale'])
+            classifier = GPy.models.GPClassification(X_train, Y_train, kernel)
+
+            # Now test on the final test set to get the score for this fold
+            X_test = X[test]
+            Y_test = np.array([y[test]]).T
+            probs = classifier.predict(X_test)[0]
+            error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+            scores.append(1.0 - error_rate)
+
+            LOG.info('  [{}] score: {} (variance: {}, length scale: {})'
+                     .format(k, scores[-1], best_params['variance'], best_params['length_scale']))
+            k += 1
+
+    return scores
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run_gp_simple(features):
+
+    X, y = util.get_xy(
+        features,
+        target_column='diagnosis',
+        exclude_columns=['age', 'gender', 'diagnosis'])
+
+    scores = []
+
+    for train, test in StratifiedKFold(y, n_folds=10):
+
+        X_train = X[train]
+        Y_train = np.array([y[train]]).T
+
+        classifier = GPy.models.GPClassification(
+            X_train, Y_train, GPy.kern.RBF(X_train.shape[1], lengthscale=4.0))
+        for _ in range(5):
+            classifier.optimize()
+
+        X_test = X[test]
+        Y_test = np.array([y[test]]).T
+
+        probs = classifier.predict(X_test)[0]
+        error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+        scores.append(1.0 - error_rate)
+
+    return scores
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run():
+
+    # Load FreeSurfer features
+    features = util.load_features(const.FREESURFER_FILE)
+    # Perform age-matching between healthy and schizophrenia patients
+    features = prepare.match_ages(features, 'HC', 'SZ', 2, nr_labels=2)
+    # Remove constant features
+    features = prepare.remove_constant_features(features)
+    # Normalize numerical features across subjects (excluding 'age')
+    features = prepare.normalize_across_subjects(features, exclude=['age'])
+    # Subtract age and gender confounds
+    features = prepare.residualize(features, ['age', 'gender', 'EstimatedTotalIntraCranialVol'])
+    # Replace HC and SZ labels with -1 and 1
+    features['diagnosis'].replace(['HC', 'SZ'], [1, 0], inplace=True)
+
+    scores = run_gp_simple(features)
+    LOG.info('overall score: {}'.format(np.mean(scores)))
+
+    # Close log
+    LOG.append_file(__file__)
+    LOG.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+    run()

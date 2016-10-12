@@ -1,0 +1,265 @@
+20150925_112226 [INFO] Running permutation 0
+20150925_112226 [INFO]   GM_accumbens_L
+20150925_112226 [INFO]   GM_accumbens_R
+20150925_112226 [INFO]   GM_amygdala_L
+20150925_112226 [INFO]   GM_amygdala_R
+20150925_112226 [INFO]   GM_brainstem
+20150925_112226 [INFO]   GM_caudate_L
+20150925_112226 [INFO]   GM_caudate_R
+20150925_112226 [INFO]   GM_hippocampus_L
+20150925_112226 [INFO]   GM_hippocampus_R
+20150925_112226 [INFO]   GM_pallidum_L
+20150925_112226 [INFO]   GM_pallidum_R
+20150925_112226 [INFO]   GM_putamen_L
+20150925_112226 [INFO]   GM_putamen_R
+20150925_112226 [INFO]   GM_thalamus_L
+20150925_112226 [INFO]   GM_thalamus_R
+20150925_112226 [INFO] Time elapsed: 00:00:00
+20150925_112226 [INFO] Running permutation 1
+20150925_112226 [INFO]   GM_accumbens_L
+20150925_112226 [INFO]   GM_accumbens_R
+20150925_112226 [INFO]   GM_amygdala_L
+20150925_112226 [INFO]   GM_amygdala_R
+20150925_112226 [INFO]   GM_brainstem
+20150925_112226 [INFO]   GM_caudate_L
+20150925_112226 [INFO]   GM_caudate_R
+20150925_112226 [INFO]   GM_hippocampus_L
+20150925_112226 [INFO]   GM_hippocampus_R
+20150925_112226 [INFO]   GM_pallidum_L
+20150925_112226 [INFO]   GM_pallidum_R
+20150925_112226 [INFO]   GM_putamen_L
+20150925_112226 [INFO]   GM_putamen_R
+20150925_112226 [INFO]   GM_thalamus_L
+20150925_112226 [INFO]   GM_thalamus_R
+20150925_112226 [INFO] Time elapsed: 00:00:00
+20150925_112226 [INFO] Running permutation 2
+20150925_112226 [INFO]   GM_accumbens_L
+20150925_112226 [INFO]   GM_accumbens_R
+20150925_112226 [INFO]   GM_amygdala_L
+20150925_112226 [INFO]   GM_amygdala_R
+20150925_112226 [INFO]   GM_brainstem
+20150925_112226 [INFO]   GM_caudate_L
+20150925_112226 [INFO]   GM_caudate_R
+20150925_112226 [INFO]   GM_hippocampus_L
+20150925_112226 [INFO]   GM_hippocampus_R
+20150925_112226 [INFO]   GM_pallidum_L
+20150925_112226 [INFO]   GM_pallidum_R
+20150925_112226 [INFO]   GM_putamen_L
+20150925_112226 [INFO]   GM_putamen_R
+20150925_112226 [INFO]   GM_thalamus_L
+20150925_112226 [INFO]   GM_thalamus_R
+20150925_112226 [INFO] Time elapsed: 00:00:00
+20150925_112226 [INFO] 
+20150925_112226 [INFO] 
+# ----------------------------------------------------------------------------------------------------------------------
+# This script uses Gaussian Process classifiers to rank ROIs.
+# ----------------------------------------------------------------------------------------------------------------------
+__author__ = 'Ralph Brecheisen'
+
+import os
+import sys
+import glob
+
+sys.path.insert(1, os.path.abspath('../..'))
+
+from scripts import util
+from scripts import const
+from scripts import logging
+from scripts import prepare
+from scripts import timing
+
+import GPy
+import multiprocessing
+import numpy as np
+import pandas as pd
+
+from sklearn.cross_validation import StratifiedKFold
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_subject_ids(label1, label2):
+
+	# Read data of first ROI available
+	roi_data = pd.read_csv(const.ROI_FILES_SUBCORTICAL[0], index_col='id')
+	# Add feature column with diagnostic labels
+	meta_file = os.path.join(const.DATA_DIR, 'meta.txt')
+	roi_data = prepare.add_feature_columns(roi_data, ['age', 'diagnosis'], meta_file)
+	# Match ages between HC and SZ patients
+	roi_data = prepare.match_ages(roi_data, label1, label2, 2, nr_labels=2)
+
+	subset1 = roi_data[roi_data['diagnosis'] == label1]
+	subset2 = roi_data[roi_data['diagnosis'] == label2]
+
+	return list(subset1.index), list(subset2.index)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_stratified_bootstrap_sample(ids1, ids2):
+
+	bids1 = list(np.random.choice(ids1, len(ids1), True))
+	bids2 = list(np.random.choice(ids2, len(ids2), True))
+	bids1.extend(bids2)
+	return bids1
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def get_stratified_subsample(ids1, ids2):
+	pass
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def build_kernel(name, input_dim):
+
+	if name == 'linear':
+		return GPy.kern.Linear(input_dim)
+	if name == 'rbf':
+		return GPy.kern.RBF(input_dim, lengthscale=5.)
+	if name == 'matern32':
+		return GPy.kern.Matern32(input_dim, lengthscale=4.)
+	if name == 'exponential':
+		return GPy.kern.Exponential(input_dim, lengthscale=2.)
+	return None
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run_gp(roi_name, subjects_ids, kernels, n_iters, test_run=False):
+
+	# Specify meta file with additional features
+	meta_file = os.path.join(const.DATA_DIR, 'meta.txt')
+	# Specify ROI file name to load
+	roi_file = os.path.join(const.ROI_DIR, roi_name + '_s0.txt')
+	# Load ROI voxel intensities
+	features = util.load_features(roi_file)
+	# Add columns for age, gender and diagnosis
+	features = prepare.add_feature_columns(features, ['age', 'gender', 'diagnosis'], meta_file)
+	# Match ages between HC and SZ patients
+	features = prepare.match_ages(features, 'HC', 'SZ', 2, nr_labels=2)
+	# Subtract age and gender confounds
+	features = prepare.residualize(features, ['age', 'gender'], verbose=False)
+	# Replace HC and SZ labels with -1 and 1
+	features['diagnosis'].replace(['HC', 'SZ'], [1, 0], inplace=True)
+	# Select only subjects we want
+	features = features.loc[subjects_ids]
+	# Get number of features
+	nr_features = features.shape[1]
+
+	# Convert data to NumPy arrays
+	X, y = util.get_xy(
+		features,
+		target_column='diagnosis',
+		exclude_columns=['age', 'gender', 'diagnosis'])
+
+	scores = {}
+
+	if not test_run:
+
+		for k in kernels:
+
+			scores[k] = []
+
+			for i in range(n_iters):
+
+				for train, test in StratifiedKFold(y, n_folds=10):
+
+					X_train = X[train]
+					Y_train = np.array([y[train]]).T
+					kernel = build_kernel(k, X_train.shape[1])
+					classifier = GPy.models.GPClassification(X_train, Y_train, kernel)
+					for _ in range(5):
+						classifier.optimize()
+
+					X_test = X[test]
+					Y_test = np.array([y[test]]).T
+					probs = classifier.predict(X_test)[0]
+					error_rate, _, _, _, _ = GPy.util.classification.conf_matrix(probs, Y_test, show=False)
+					scores[k].append(1.0 - error_rate)
+
+	if test_run:
+		for k in kernels:
+			scores[k] = list(np.ones(n_iters * 10))
+
+	# Determine file write mode
+	score_file = os.path.join(const.RESULTS_DIR, roi_name + '_scores.txt')
+	write_mode = 'w'
+	if os.path.isfile(score_file):
+		write_mode = 'a'
+
+	# Write output to file
+	with open(score_file, write_mode) as f:
+		line = list()
+		line.append(roi_name)
+		line.append(str(nr_features))
+		for k in kernels:
+			line.append(str(np.mean(scores[k])))
+		f.write(','.join(line) + '\n')
+
+# ----------------------------------------------------------------------------------------------------------------------
+def run():
+
+	# We're trying to obtain a stable ranking of sub-cortical regions of interest (ROIs). If we look
+	# at a single run, then we get a mean accuracy score for each ROI. We can sort these scores to
+	# obtain a ranking. To make sure this ranking is stable we need to introduce some randomness into
+	# the procedure. We can do this, e.g., using bootstrapping.
+
+	# Create results output directory. If it contains ROI score files
+	# delete all of them.
+	if not os.path.isdir(const.RESULTS_DIR):
+		os.mkdir(const.RESULTS_DIR)
+	for f in glob.glob(os.path.join(const.RESULTS_DIR, 'GM_*_scores.txt')):
+		os.remove(f)
+
+	# Delete temporary log files and create new logger
+	for f in glob.glob(os.path.join(const.LOG_DIR, '*.tmp')):
+		os.remove(f)
+	LOG = logging.Logger()
+
+	# Set parameters
+	kernels  = ['linear', 'rbf']
+	parallel = False
+	test_run = False
+	nr_perm  = 3
+	nr_iter  = 1
+
+	# Get list of subject IDs for given diagnostic labels
+	ids_hc, ids_sz = get_subject_ids('HC', 'SZ')
+
+	f = open('ids.txt', 'w')
+	for i in range(nr_perm):
+
+		LOG.info('Running permutation {}'.format(i))
+		start = timing.now()
+
+		# TODO: accuracies exactly identical even though different subjects
+		# Create bootstrap sample of subject IDs preserving stratification of labels
+		ids_perm = get_stratified_bootstrap_sample(ids_hc, ids_sz)
+		f.write(','.join(ids_perm) + '\n')
+
+		# Run classifier on each ROI
+		threads = []
+		for roi_name in const.ROI_NAMES_SUBCORTICAL:
+			LOG.info('  {}'.format(roi_name))
+			continue
+			if not parallel:
+				run_gp(roi_name, ids_perm, kernels, nr_iter, test_run)
+			else:
+				thread = multiprocessing.Process(
+					target=run_gp, args=(roi_name, ids_perm, kernels, nr_iter, test_run))
+				threads.append(thread)
+				thread.start()
+		if parallel:
+			for thread in threads:
+				thread.join()
+
+		LOG.info('Time elapsed: {}'.format(timing.elapsed(start)))
+
+	f.close()
+
+	# Close log
+	LOG.append_file(__file__)
+	LOG.close()
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+if __name__ == '__main__':
+
+	run()
