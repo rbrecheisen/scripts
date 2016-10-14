@@ -27,14 +27,17 @@ if [ "${changed}" == "false" ]; then
 fi
 
 i=1
+echo "-----------------------------------------------------------------------------------"
 echo "The following projects have changes:"
 for p in "${projects[@]}"; do
 	echo "${i} ${p}"
 	i=$((i+1))
 done
 
+echo
 echo "Type 'all' to commit all projects. Type a space-separated list of negative indexes"
 echo "to exclude projects with that index."
+echo
 read cmd
 
 if [ "${cmd}" == "all" ]; then
