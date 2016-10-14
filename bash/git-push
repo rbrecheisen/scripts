@@ -1,18 +1,19 @@
-#!/usr/bin/env python
+#!/bin/bash
 
-import os
+pwd=$(pwd)
+cd ${HOME}/development
 
-def run():
-    base = '/Users/Ralph/development'
-    dirs = os.listdir(base)
-    for d in dirs:
-        d = os.path.join(base, d)
-        if not os.path.isdir(d):
-            continue
-        if not os.path.isdir(os.path.join(d, '.git')):
-            continue
-        os.system('cd {}; git add -A; git commit -m "Saving work"; git pull'.format(d))
+for d in $(ls); do
+	if [ -d ${d} ]; then
+		cd $(pwd)/${d}
+		if [ -d $(pwd)/.git ]; then
+			changes=$(git status -s)
+			if [ "${changes}" != "" ]; then
+				git add -A; git commit -m "Saving work"; git push
+			fi
+		fi
+		cd ..
+	fi
+done
 
-if __name__ == '__main__':
-    run()
-
+cd ${pwd}
