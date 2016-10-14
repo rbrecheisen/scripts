@@ -3,6 +3,7 @@
 pwd=$(pwd)
 cd ${HOME}/development
 
+changed="false"
 projects=()
 
 for d in $(ls); do
@@ -13,11 +14,17 @@ for d in $(ls); do
 			if [ "${changes}" != "" ]; then
 				# git add -A; git commit -m "Saving work"; git push
 				projects+=(${d})
+				changed="true"
 			fi
 		fi
 		cd ..
 	fi
 done
+
+if [ "${changed}" == "false" ]; then
+	echo "no changes"
+	exit
+fi
 
 i=1
 echo "The following projects have changes:"
