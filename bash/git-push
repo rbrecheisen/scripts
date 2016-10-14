@@ -3,17 +3,63 @@
 pwd=$(pwd)
 cd ${HOME}/development
 
+projects=()
+
 for d in $(ls); do
 	if [ -d ${d} ]; then
 		cd $(pwd)/${d}
 		if [ -d $(pwd)/.git ]; then
 			changes=$(git status -s)
 			if [ "${changes}" != "" ]; then
-				git add -A; git commit -m "Saving work"; git push
+				# git add -A; git commit -m "Saving work"; git push
+				projects+=(${d})
 			fi
 		fi
 		cd ..
 	fi
+done
+
+i=1
+echo "The following projects have changes:"
+for p in "${projects[@]}"; do
+	echo "${i} ${p}"
+	i=$((i+1))
+done
+
+echo "Type 'all' to commit all projects. Type a space-separated list of negative indexes"
+echo "to exclude projects with that index."
+read cmd
+
+if [ "${cmd}" == "all" ]; then
+	for p in "${projects[@]}"; do
+		cd $(pwd)/${p}
+		git add -A; git commit -m "Saving work"; git push
+		cd ..
+	done
+	cd ${pwd}
+	exit
+fi
+
+commit=()
+for p in "${projects[@]}"; do
+	found="false"
+	for j in "${cmd[@]}"; do
+		j=$((-j-1))
+		echo "${projects[j]}"
+		if [ "${projects[j]}" == "${p}" ]; then
+			found="true"; break
+		fi
+	done
+	if [ "${found}" == "false" ]; then
+		commit+=(${p})
+	fi
+done
+
+for p in "${commit[@]}"; do
+	cd $(pwd)/${p}
+	echo "Committing ${p}"
+	git add -A; git commit -m "Saving work"; git push
+	cd ..
 done
 
 cd ${pwd}
