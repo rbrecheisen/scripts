@@ -3,7 +3,7 @@ import shutil
 import numpy as np
 import pandas as pd
 
-SFTP_DIR = '/Volumes/imagemend.zi-mannheim.de'
+SFTP_DIR = '/Volumes/imagemend-yJz2euONQq'
 DATA_DIR = '/Users/Ralph/datasets/imagemend/multimodal'
 
 
@@ -20,9 +20,8 @@ def collect_subject_info():
             'age': 0,
             'gender': '',
             'rs_path': os.path.join(SFTP_DIR, 'UiO/rsfMRI'),
-            'rs_file': f,
-            't1_path': '',
-            't1_file': ''}
+            'rs_file': f
+        }
     # Load subject meta data from Excel sheet
     meta_data = pd.read_excel(
         os.path.join(SFTP_DIR, 'UiO/NEW_15042014_UiO_ModifiedMetaData_08052014.xlsx'),
@@ -43,25 +42,13 @@ def collect_subject_info():
             subjects[subject_id]['gender'] = meta_data.loc[sid, 'Gender [m/f]'][0].upper()
         else:
             print('RSFMRI: subject {}_{} not found in Excel sheet'.format(sid, mid))
-    # Get list of structural MRI subjects and check whether they exist in Excel sheet
-    files = os.listdir(os.path.join(SFTP_DIR, 'UiO/sMRI'))
-    for f in files:
-        sid = '_'.join(f.split('_')[0:2])
-        mid = '_'.join(f.split('_')[2:4])
-        if sid not in meta_data.index:
-            print('SMRI: subject {}_{} not found in Excel sheet'.format(sid, mid))
-    # Find sMRI file corresponding to rsfMRI file
-    errors = 0
+    # Read structural MRI features
+    stats_data = pd.read_csv(os.path.join(
+        SFTP_DIR, 'UiO/UiO_TOP3T_FreeSurfer/stats/TOP3T_allROIFeatures_wmparcStatsAdded_N513.csv'), index_col=0)
+    # For each resting-state subject check we also have structural features
     for subject_id in subjects.keys():
-        f = '{}_sMRI.nii.gz'.format(subject_id)
-        if f in files:
-            subjects[subject_id]['t1_path'] = os.path.join(SFTP_DIR, 'UiO/sMRI')
-            subjects[subject_id]['t1_file'] = f
-            print(subjects[subject_id])
-        else:
-            errors += 1
-    if errors > 0:
-        print('Error: missing structural files for {} out of {} subjects'.format(errors, len(subjects)))
+        if '{}_sMRI'.format(subject_id) not in stats_data.index:
+            print('sMRI: subject {} not found in FreeSurfer stats file'.format(subject_id))
     return subjects
 
 
